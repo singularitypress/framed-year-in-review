@@ -26,6 +26,9 @@
       "@util": [
         "util"
       ],
+      "@components/*": [
+        "components/*"
+      ],
     }
   },
   "include": [

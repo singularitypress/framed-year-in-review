@@ -18,7 +18,7 @@ const hof = readFileSync(resolve("./pages/api/ShotsStandardNames.csv"), {
   encoding: "utf8",
 });
 
-const toJson = (data: string) => {
+const toJson = (data: string, name: string) => {
   const [keys, ...values] = data.split("\n");
 
   const shotArr = values.map((row) => {
@@ -46,7 +46,7 @@ const toJson = (data: string) => {
   );
 
   writeFileSync(
-    "out.json",
+    name,
     JSON.stringify(
       shotArr
         .filter((shot) => !!shot?.date?.match(/^\d{4}\-/))
@@ -78,4 +78,5 @@ const toJson = (data: string) => {
   );
 };
 
-toJson(hof);
+toJson(hof, "ShotsStandardNames.json");
+toJson(sys, "shareyourshot2022data.json");
