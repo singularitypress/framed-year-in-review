@@ -2,39 +2,18 @@ import { IShot } from "@types";
 import { readFileSync } from "fs";
 import { createYoga, createSchema } from "graphql-yoga";
 import { resolve } from "path";
-import { calendarDataFormat } from "@util";
 
-const shareyourshot2022data = readFileSync(
-  resolve("./pages/api/shareyourshot2022data.csv"),
-  {
+const sys: IShot[] = JSON.parse(
+  readFileSync(resolve("./pages/api/shareyourshot2022data.json"), {
     encoding: "utf8",
-  },
-).split("\n");
+  }),
+);
 
-const ShotsStandardNames = readFileSync(
-  resolve("./pages/api/ShotsStandardNames.csv"),
-  {
+const hof: IShot[] = JSON.parse(
+  readFileSync(resolve("./pages/api/ShotsStandardNames.json"), {
     encoding: "utf8",
-  },
-).split("\n");
-
-const generateShots = (csv: string[]): IShot[] => {
-  const keys = csv[0].split(",");
-  return csv.slice(1).map((row) => {
-    const values = row.split(",");
-    return keys.reduce((obj, nextKey, index) => {
-      return {
-        ...obj,
-        [nextKey]: values[index],
-      };
-    }, {});
-  }) as IShot[];
-};
-
-const [sys, hof] = [
-  generateShots(shareyourshot2022data),
-  generateShots(ShotsStandardNames),
-];
+  }),
+);
 
 const typeDefs = /* GraphQL */ `
   type Shot {
