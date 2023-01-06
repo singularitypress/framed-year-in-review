@@ -2,7 +2,7 @@ import { IShot } from "@types";
 import Head from "next/head";
 import useSWR from "swr";
 import { CalendarTooltipProps, ResponsiveCalendar } from "@nivo/calendar";
-import { ResponsivePie } from "@nivo/pie";
+import Select from "react-select";
 import { useState } from "react";
 import { calendarDataFormat } from "@util";
 import { Calendar, Pie } from "@components/charts";
@@ -34,7 +34,7 @@ const CustomTooltip = (data: CalendarTooltipProps) => {
 
 export default function Home() {
   const [enabled, setEnabled] = useState(false);
-  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedDay, setSelectedDay] = useState("2021-12-25");
 
   const sys = useSWR(
     /* GraphQL */ `
@@ -75,6 +75,26 @@ export default function Home() {
   if (sys.error || hof.error) return <div>Failed to load</div>;
   if (!sys.data || !hof.data) return <div>Loading...</div>;
 
+  const sysGameNames = (
+    [
+      ...new Set(
+        sys.data.shots
+          .map(({ gameName }: IShot) => gameName)
+          .sort((a: string, b: string) => {
+            const gameA = a.toLowerCase();
+            const gameB = b.toLowerCase();
+            if (gameA < gameB) {
+              return -1;
+            }
+            if (gameA > gameB) {
+              return 1;
+            }
+            return 0;
+          })
+      ),
+    ] as string[]
+  ).map((item) => ({ label: item, value: item }));
+
   return (
     <>
       <Head>
@@ -87,6 +107,7 @@ export default function Home() {
         <h1>
           <strong>Home</strong>
         </h1>
+        <Select options={sysGameNames} />
         <div className="relative flex flex-col items-center justify-center overflow-hidden">
           <div className="flex">
             <label className="inline-flex relative items-center mr-5 cursor-pointer">
@@ -126,8 +147,7 @@ export default function Home() {
               data={Object.values(
                 ((enabled ? hof.data.shots : sys.data.shots) as IShot[])
                   .filter(
-                    (shot) =>
-                      shot.date.replace(/T.*$/g, "") === selectedDay
+                    (shot) => shot.date.replace(/T.*$/g, "") === selectedDay
                   )
                   .reduce((acc, shot) => {
                     if (acc[shot.gameName]) {

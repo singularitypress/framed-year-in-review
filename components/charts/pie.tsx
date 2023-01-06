@@ -4,14 +4,15 @@ import React from "react";
 export const Pie = (
   props: Omit<PieSvgProps<DefaultRawDatum>, "width" | "height">
 ) => {
+  const total = props.data.reduce((total, item) => total + item.value, 0);
   return (
     <ResponsivePie
-      margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+      margin={{ top: 40, bottom: 80 }}
       innerRadius={0.5}
       padAngle={0.7}
-      cornerRadius={3}
+      cornerRadius={4}
       activeOuterRadiusOffset={8}
-      borderWidth={1}
+      borderWidth={0}
       colors={[
         "#003f5c",
         "#2f4b7c",
@@ -28,11 +29,7 @@ export const Pie = (
       }}
       arcLinkLabelsSkipAngle={1}
       arcLinkLabel={(d) =>
-        `${d.id} (${d.value}) ${(
-          (d.value /
-            props.data.reduce((total, item) => total + item.value, 0)) *
-          100
-        ).toFixed(2)}%`
+        `${d.id} (${((d.value / total) * 100).toFixed(2)}%)`
       }
       enableArcLabels={false}
       arcLinkLabelsTextColor="#000"

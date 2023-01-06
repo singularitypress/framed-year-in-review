@@ -7,22 +7,22 @@ const dict: {
 } = JSON.parse(
   readFileSync(resolve("./scripts/game-dict.json"), {
     encoding: "utf8",
-  }),
+  })
 );
 
 const sys = readFileSync(resolve("./pages/api/shareyourshot2022data.csv"), {
   encoding: "utf8",
-});
+}).replace(/\(PC\)/g, "");
 
 const hof = readFileSync(resolve("./pages/api/ShotsStandardNames.csv"), {
   encoding: "utf8",
-});
+}).replace(/\(PC\)/g, "");
 
 const toJson = (data: string, name: string) => {
   const [keys, ...values] = data.split("\n");
 
   const shotArr = values.map((row) => {
-    const values = row.split(",");
+    const values = row.split(/,+(?=(?:(?:[^"]*"){2})*[^"]*$)/g);
     return keys.split(",").reduce((obj, nextKey, index) => {
       if (nextKey === "date") {
         if (!!new Date(values[index]).getTime()) {
@@ -42,40 +42,52 @@ const toJson = (data: string, name: string) => {
   console.log(
     `there are ${
       shotArr.filter((shot) => !shot?.date?.match(/^\d{4}\-/)).length
-    } bad objects out of ${shotArr.length}`,
+    } bad objects out of ${shotArr.length}`
   );
+
+  const shotJson = shotArr
+    .filter((shot) => !!shot?.date?.match(/^\d{4}\-/))
+    .reduce((acc, curr, index) => {
+      let gameName = curr.gameName;
+      if (!curr.gameName || curr.gameName === "." || curr.gameName.includes("https://")) {
+        gameName = acc.filter(({ gameName }) => !!gameName)[
+          acc.filter(({ gameName }) => !!gameName).length - 1
+        ].gameName;
+      }
+      gameName = gameName.replace(/(\r|\sPC$)/g, "");
+      gameName.match("\r") && console.log(gameName);
+
+      // if (!dict[gameName]) {
+      //   dict[gameName] = "";
+      // }
+
+      return [...acc, { ...curr, gameName: dict[gameName] ?? gameName }];
+    }, [] as IShot[]);
 
   writeFileSync(
-    name,
+    resolve("./scripts/game-dict.json"),
     JSON.stringify(
-      shotArr
-        .filter((shot) => !!shot?.date?.match(/^\d{4}\-/))
-        .reduce((acc, curr, index) => {
-          if (!curr.gameName) {
-            const lastGameName = acc.filter(({ gameName }) => !!gameName)[
-              acc.filter(({ gameName }) => !!gameName).length - 1
-            ].gameName;
-
-            return [
-              ...acc,
-              {
-                ...curr,
-                gameName: lastGameName,
-              },
-            ];
+      Object.keys(dict)
+        .sort(
+          (a, b) => {
+            const gameA = a.toLowerCase();
+            const gameB = b.toLowerCase();
+            if (gameA < gameB) return -1;
+            if (gameA > gameB) return 1;
+            return 0;
           }
-
-          return [...acc, curr];
-        }, [] as IShot[])
-        .map((shot) => ({
-          ...shot,
-          gameName: dict[shot.gameName] ?? shot.gameName,
-        })),
+        )
+        .reduce((obj, key) => {
+          obj[key] = dict[key];
+          return obj;
+        }, {} as { [key: string]: string })
     ),
-    {
-      encoding: "utf8",
-    },
+    { encoding: "utf8" }
   );
+
+  writeFileSync(name, JSON.stringify(shotJson), {
+    encoding: "utf8",
+  });
 };
 
 toJson(hof, "ShotsStandardNames.json");
