@@ -27,6 +27,7 @@ const typeDefs = /* GraphQL */ `
     colorName: String
     orientation: String
     aspectRatio: String
+    attachments: String
   }
 
   type Query {
