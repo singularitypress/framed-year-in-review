@@ -9,4 +9,5 @@ export interface IShot {
   colorName?: string;
   orientation?: string;
   aspectRatio?: string;
+  attachments?: string;
 }

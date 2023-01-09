@@ -6,6 +6,10 @@
 
 html {
   font-family: "Inter", sans-serif;
+
+  body {
+    @apply bg-slate-600 text-white;
+  }
 }
 
 .calendar {
