@@ -6,16 +6,16 @@ export const Navigation = () => {
   const items = [
     {
       title: "Home",
-      href: "/home",
+      href: "/",
     },
     {
-      title: "About",
-      href: "/about",
+      title: "Data",
+      href: "/data",
     },
   ];
 
   return (
-    <nav className="w-full fixed top-0 py-3 bg-slate-600 text-white z-50">
+    <nav className="w-full fixed top-0 py-3 bg-slate-600/50 backdrop-blur-lg border-b border-b-white/10 text-white z-50 shadow-md">
       <Container>
         <ul className="flex items-center">
           <li>

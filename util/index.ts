@@ -7,7 +7,7 @@ export const calendarDataFormat = (data: IShot[]) => {
         const shotDate = shot.date.replace(/T.*$/g, "");
 
         if (acc[shotDate]) {
-          acc[shotDate].value += 1;
+          acc[shotDate].value++;
           acc[shotDate].shots.push(shot);
         } else {
           acc[shotDate] = {
@@ -20,9 +20,37 @@ export const calendarDataFormat = (data: IShot[]) => {
       },
       {} as {
         [key: string]: { value: number; day: string; shots: IShot[] };
-      },
-    ),
+      }
+    )
   );
+};
+
+export const gameDistPie = (data: IShot[]) => {
+  return Object.values(
+    data.reduce((acc, shot) => {
+      if (acc[shot.gameName]) {
+        acc[shot.gameName].value++;
+      } else {
+        acc[shot.gameName] = {
+          id: shot.gameName,
+          label: shot.gameName,
+          value: 1,
+        };
+      }
+      return acc;
+    }, {} as { [key: string]: { id: string; label: string; value: number } })
+  )
+    .sort((a, b) => b.value - a.value)
+    .reduce((acc, shot, i) => {
+      if (i < 8) {
+        return [...acc, shot];
+      } else {
+        acc[7].id = "Other";
+        acc[7].label = "Other";
+        acc[7].value += shot.value;
+        return acc;
+      }
+    }, [] as { id: string; label: string; value: number }[]);
 };
 
 export const sequentialFadeIn = (className: string) => {
