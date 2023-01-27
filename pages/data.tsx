@@ -3,12 +3,7 @@ import Head from "next/head";
 import { CalendarTooltipProps, ResponsiveCalendar } from "@nivo/calendar";
 import Select from "react-select";
 import { useEffect, useState, useRef, RefObject } from "react";
-import {
-  calendarDataFormat,
-  gameDistPie,
-  getDateLastYear,
-  sequentialFadeIn,
-} from "@util";
+import { calendarDataFormat, gameDistPie, sequentialFadeIn } from "@util";
 import { Calendar, Pie } from "@components/charts";
 import { GetStaticProps } from "next";
 import { Container, SegmentedControl } from "@components/global";
@@ -38,17 +33,11 @@ const CustomTooltip = (data: CalendarTooltipProps) => {
   );
 };
 
-export default function Home({
-  sys,
-  hof,
-  shotsLastYear,
-}: {
-  sys: IShot[];
-  hof: IShot[];
-  shotsLastYear: IShot;
-}) {
+export default function Home({ grid }: { grid: IShot[] }) {
   const [enabled, setEnabled] = useState(false);
   const [selectedDay, setSelectedDay] = useState("2021-12-25");
+  const [sys, setSys] = useState<IShot[]>([]);
+  const [hof, setHof] = useState<IShot[]>([]);
 
   const sysGameNames = (
     [
@@ -79,10 +68,47 @@ export default function Home({
     Calendar: useRef<HTMLDivElement>(null),
   };
 
+  const getShots = async () => {
+    const data: {
+      sys: IShot[];
+      hof: IShot[];
+    } = await fetcher(/* GraphQL */ `
+      query {
+        sys: shots(
+          startDate: "2019-01-01"
+          endDate: "2022-12-31"
+          type: "sys"
+          format: "calendar"
+        ) {
+          attachments
+          authorNick
+          gameName
+          date
+        }
+
+        hof: shots(
+          startDate: "2019-01-01"
+          endDate: "2022-12-31"
+          type: "hof"
+          format: "calendar"
+        ) {
+          authorNick
+          gameName
+          date
+        }
+      }
+    `);
+
+    setSys(data.sys);
+    setHof(data.hof);
+  };
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       sequentialFadeIn("bg-img");
       sequentialFadeIn("load");
+
+      getShots();
     }
   }, []);
 
@@ -136,26 +162,29 @@ export default function Home({
                   </p>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
-                  {Array.from(Array(9).keys()).map((item, index) => {
-                    const randIdx = Math.floor(Math.random() * sys.length - 1);
+                  {grid.map((item, index) => {
                     return (
                       <div
-                        key={`${item}-${index}`}
+                        key={`${item.authorId}-${index}`}
                         className="relative aspect-square"
                       >
-                        <p
-                          className={`
+                        <div className="absolute w-full h-full transition-all duration-500 opacity-0 translate-y-5 hover:opacity-100 hover:translate-y-0">
+                          <p
+                            className={`
                             absolute bottom-0 left-0 right-0 text-white text-sm p-4
                             bg-gradient-to-t from-gray-900
                           `}
-                        >
-                          {sys[randIdx].authorNick}
-                        </p>
+                          >
+                            {item.authorNick}
+                            <br />
+                            {item.gameName}
+                          </p>
+                        </div>
                         <picture>
                           <img
                             className="load transition-all -translate-y-10 opacity-0 duration-500 rounded-md object-cover"
-                            alt={sys[randIdx].gameName}
-                            src={`${sys[randIdx].attachments?.replace(
+                            alt={item.gameName}
+                            src={`${item.attachments?.replace(
                               "https://cdn.discordapp.com",
                               "https://media.discordapp.net",
                             )}?width=600&height=600`}
@@ -246,35 +275,19 @@ export default function Home({
             </div>
           </Container>
         </div>
-        {shotsLastYear.attachments && (
-          <picture>
-            <img
-              alt=""
-              src={shotsLastYear.attachments}
-              className="bg-img top-0 transition-all -translate-y-10 opacity-0 duration-500 object-cover absolute inset-0 w-full h-full"
-            />
-          </picture>
-        )}
       </main>
     </>
   );
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const start = getDateLastYear();
-  const end = getDateLastYear(true);
-
   const {
-    sys,
-    hof,
-    shotsLastYear = [],
+    grid,
   }: {
-    sys: IShot[];
-    hof: IShot[];
-    shotsLastYear: IShot[];
+    grid: IShot[];
   } = await fetcher(/* GraphQL */ `
     query {
-      sys: shots(
+      grid: shots(
         startDate: "2019-01-01"
         endDate: "2022-12-31"
         type: "sys"
@@ -284,41 +297,16 @@ export const getStaticProps: GetStaticProps = async () => {
         authorNick
         gameName
         date
-      }
-
-      hof: shots(
-        startDate: "2019-01-01"
-        endDate: "2022-12-31"
-        type: "hof"
-        format: "calendar"
-      ) {
-        authorNick
-        gameName
-        date
-      }
-
-      shotsLastYear: shots(
-        startDate: "${start.year}-${start.month}-${start.day}"
-        endDate: "${end.year}-${end.month}-${end.day}"
-        type: "sys"
-      ) {
-        attachments
       }
     }
   `);
 
-  const len = shotsLastYear.length;
-  const idx = Math.floor(Math.random() * len);
-
   return {
     props: {
-      hof,
-      sys: sys.filter((shot) => shot.attachments?.startsWith("https")),
-      shotsLastYear: shotsLastYear.filter((shot) =>
-        shot.attachments?.startsWith("https"),
-      )[idx] ?? {
-        attachments: "",
-      },
+      grid: Array.from(Array(9).keys()).map(() => {
+        const randIdx = Math.floor(Math.random() * grid.length - 1);
+        return grid[randIdx];
+      }),
     },
   };
 };
