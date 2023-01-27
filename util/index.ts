@@ -20,8 +20,8 @@ export const calendarDataFormat = (data: IShot[]) => {
       },
       {} as {
         [key: string]: { value: number; day: string; shots: IShot[] };
-      }
-    )
+      },
+    ),
   );
 };
 
@@ -38,7 +38,7 @@ export const gameDistPie = (data: IShot[]) => {
         };
       }
       return acc;
-    }, {} as { [key: string]: { id: string; label: string; value: number } })
+    }, {} as { [key: string]: { id: string; label: string; value: number } }),
   )
     .sort((a, b) => b.value - a.value)
     .reduce((acc, shot, i) => {
@@ -64,4 +64,20 @@ export const sequentialFadeIn = (className: string) => {
         }, 250 * (index + 1));
       });
   }
+};
+
+export const getDateLastYear = (tomorrow = false) => {
+  const oneYear = 31556952000;
+  const oneDayMs = 24 * 60 * 60 * 1000;
+  const lastYear = new Date(Date.now() + (tomorrow ? oneDayMs : 0) - oneYear);
+
+  return {
+    year: lastYear.getFullYear(),
+    month:
+      lastYear.getMonth() + 1 < 10
+        ? `0${lastYear.getMonth() + 1}`
+        : lastYear.getMonth() + 1,
+    day:
+      lastYear.getDate() < 10 ? `0${lastYear.getDate()}` : lastYear.getDate(),
+  };
 };

@@ -93,10 +93,12 @@ const resolvers = {
         );
       }
 
-      return filteredShots.map((shot) => ({
-        ...shot,
-        date: new Date(shot.date).toISOString(),
-      }));
+      return (
+        filteredShots.map((shot) => ({
+          ...shot,
+          date: new Date(shot.date).toISOString(),
+        })) ?? []
+      );
     },
     games: (parent: undefined, type: "sys" | "hof") => [
       ...new Set((type === "sys" ? sys : hof).map((shot) => shot.gameName)),

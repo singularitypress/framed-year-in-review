@@ -2,7 +2,7 @@ import { ResponsivePie, PieSvgProps, DefaultRawDatum } from "@nivo/pie";
 import React from "react";
 
 export const Pie = (
-  props: Omit<PieSvgProps<DefaultRawDatum>, "width" | "height">
+  props: Omit<PieSvgProps<DefaultRawDatum>, "width" | "height">,
 ) => {
   const total = props.data.reduce((total, item) => total + item.value, 0);
   return (
@@ -28,11 +28,9 @@ export const Pie = (
         modifiers: [["darker", 0.2]],
       }}
       arcLinkLabelsSkipAngle={1}
-      arcLinkLabel={(d) =>
-        `${d.id} (${((d.value / total) * 100).toFixed(2)}%)`
-      }
+      arcLinkLabel={(d) => `${d.id} (${((d.value / total) * 100).toFixed(2)}%)`}
       enableArcLabels={false}
-      arcLinkLabelsTextColor="#000"
+      arcLinkLabelsTextColor="#FFF"
       arcLinkLabelsThickness={2}
       arcLinkLabelsColor={{ from: "color" }}
       arcLabelsSkipAngle={10}

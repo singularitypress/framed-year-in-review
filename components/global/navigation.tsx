@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 import { Container } from "./container";
 
 export const Navigation = () => {
+  const router = useRouter();
+
   const items = [
     {
       title: "Home",
@@ -15,7 +18,7 @@ export const Navigation = () => {
   ];
 
   return (
-    <nav className="w-full fixed top-0 py-3 bg-slate-600/50 backdrop-blur-lg border-b border-b-white/10 text-white z-50 shadow-md">
+    <nav className="w-full fixed top-0 py-3 bg-black/30 backdrop-blur-lg border-b border-b-white/10 shadow-md text-white z-50">
       <Container>
         <ul className="flex items-center">
           <li>
@@ -42,7 +45,22 @@ export const Navigation = () => {
             <li key={index}>
               <strong>
                 <Link
-                  className="hover:bg-slate-700 px-4 py-2 rounded-md"
+                  className={`
+                  hover:bg-white
+                  hover:bg-opacity-10
+                  hover:text-white
+                  px-4
+                  py-2
+                  ${index === 0 ? "rounded-l-md" : ""}
+                  ${index === items.length - 1 ? "rounded-r-md" : ""}
+                  transition-all
+                  duration-300
+                  ease-in-out
+                  ${
+                    router.pathname === item.href
+                      ? "bg-white bg-opacity-20"
+                      : ""
+                  }`}
                   href={item.href}
                 >
                   {item.title}
