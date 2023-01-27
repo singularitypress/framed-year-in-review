@@ -1,12 +1,15 @@
 import { IShot } from "@types";
 import Head from "next/head";
-import { CalendarTooltipProps, ResponsiveCalendar } from "@nivo/calendar";
+import { CalendarTooltipProps } from "@nivo/calendar";
 import Select from "react-select";
 import { useEffect, useState, useRef, RefObject } from "react";
 import { calendarDataFormat, gameDistPie, sequentialFadeIn } from "@util";
 import { Calendar, Pie } from "@components/charts";
 import { GetStaticProps } from "next";
 import { Container, SegmentedControl } from "@components/global";
+import { DefaultRawDatum } from "@nivo/pie";
+
+interface Top10 extends IShot, DefaultRawDatum {}
 
 const fetcher = (query: string) =>
   fetch(`${process.env.BASE_FETCH_URL}/api/graphql`, {
@@ -33,7 +36,17 @@ const CustomTooltip = (data: CalendarTooltipProps) => {
   );
 };
 
-export default function Home({ grid }: { grid: IShot[] }) {
+export default function Home({
+  grid,
+  categoriesImages,
+  top10sys,
+  top10hof,
+}: {
+  grid: IShot[];
+  categoriesImages: IShot[];
+  top10sys: Top10[];
+  top10hof: Top10[];
+}) {
   const [enabled, setEnabled] = useState(false);
   const [selectedDay, setSelectedDay] = useState("2021-12-25");
   const [sys, setSys] = useState<IShot[]>([]);
@@ -62,7 +75,10 @@ export default function Home({ grid }: { grid: IShot[] }) {
   const segments: {
     [key: string]: RefObject<HTMLDivElement>;
   } = {
-    Top: useRef<HTMLDivElement>(null),
+    "Top 10 Games in Share Your Shot": useRef<HTMLDivElement>(null),
+    "Top 10 Games in the Hall of Framed": useRef<HTMLDivElement>(null),
+    "Most Active Day in Share Your Shot": useRef<HTMLDivElement>(null),
+    "Most Active Day in the Hall of Framed": useRef<HTMLDivElement>(null),
     "Daily Shots": useRef<HTMLDivElement>(null),
     "Full Year": useRef<HTMLDivElement>(null),
     Calendar: useRef<HTMLDivElement>(null),
@@ -136,11 +152,8 @@ export default function Home({ grid }: { grid: IShot[] }) {
             </Container>
           </div>
           <Container className="pt-8 -translate-y-20">
-            <div
-              className="h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500"
-              ref={segments.Top}
-            >
-              <div className="grid grid-cols-2 gap-x-8">
+            <div className="h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
                 <div className="flex flex-col justify-center">
                   <h1 className="font-bold text-7xl">
                     Welcome to Framed&apos;s 2022 in Review!
@@ -161,12 +174,51 @@ export default function Home({ grid }: { grid: IShot[] }) {
                     past year.
                   </p>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
-                  {grid.map((item, index) => {
+                <div className="hidden md:flex flex-col justify-center">
+                  <div className="grid grid-cols-3 gap-4 aspect-square">
+                    {grid.map((item, index) => {
+                      return (
+                        <div
+                          key={`${item.authorId}-${index}`}
+                          className="relative aspect-square"
+                        >
+                          <div className="absolute w-full h-full transition-all duration-500 opacity-0 translate-y-5 hover:opacity-100 hover:translate-y-0">
+                            <p
+                              className={`
+                            absolute bottom-0 left-0 right-0 text-white text-sm p-4
+                            bg-gradient-to-t from-gray-900
+                          `}
+                            >
+                              {item.authorNick}
+                              <br />
+                              {item.gameName}
+                            </p>
+                          </div>
+                          <picture>
+                            <img
+                              className="load transition-all -translate-y-10 opacity-0 duration-500 rounded-md object-cover"
+                              alt={item.gameName}
+                              src={`${item.attachments?.replace(
+                                "https://cdn.discordapp.com",
+                                "https://media.discordapp.net",
+                              )}?width=600&height=600`}
+                            />
+                          </picture>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="h-screen flex flex-col justify-center load transition-all -translate-y-10 opacity-0 duration-500">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
+                <div className="hidden md:grid grid-cols-3 max-h-screen">
+                  {categoriesImages.map((item, index) => {
                     return (
                       <div
                         key={`${item.authorId}-${index}`}
-                        className="relative aspect-square"
+                        className="relative aspect-auto"
                       >
                         <div className="absolute w-full h-full transition-all duration-500 opacity-0 translate-y-5 hover:opacity-100 hover:translate-y-0">
                           <p
@@ -182,7 +234,16 @@ export default function Home({ grid }: { grid: IShot[] }) {
                         </div>
                         <picture>
                           <img
-                            className="load transition-all -translate-y-10 opacity-0 duration-500 rounded-md object-cover"
+                            className={`
+                            load transition-all -translate-y-10 opacity-0 duration-500 object-cover h-full
+                            ${
+                              index === 0
+                                ? "rounded-tl-md rounded-bl-md"
+                                : index === 2
+                                ? "rounded-tr-md rounded-br-md"
+                                : ""
+                            }
+                            `}
                             alt={item.gameName}
                             src={`${item.attachments?.replace(
                               "https://cdn.discordapp.com",
@@ -194,13 +255,157 @@ export default function Home({ grid }: { grid: IShot[] }) {
                     );
                   })}
                 </div>
+                <div>
+                  <h2 className="text-6xl font-bold mb-8">Categories</h2>
+                  {Object.keys(segments).map((key) => {
+                    return (
+                      <div key={key} className="mb-8" ref={segments[key]}>
+                        <div className="flex flex-col justify-center">
+                          <button
+                            className="text-left"
+                            onClick={() => {
+                              if (segments[key].current) {
+                                segments[key].current?.scrollIntoView({
+                                  behavior: "smooth",
+                                  block: "start",
+                                });
+                              }
+                            }}
+                          >
+                            <h3 className="text-3xl font-bold">{key}</h3>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
             <div
-              className="h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500"
-              ref={segments.Top}
+              className="min-h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500 mb-8"
+              ref={segments["Top 10 Games in Share Your Shot"]}
             >
-              <h2 className="text-6xl font-bold">Categories</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
+                <div className="flex flex-col justify-center">
+                  <h2 className="text-6xl font-bold mb-8">
+                    Top 10 Games in Share Your Shot
+                  </h2>
+                  <p>
+                    As we wrap up 2022, it&apos;s time to take a look back at
+                    the most captivating virtual shots of the year in
+                    Framed&apos;s Share Your Shot. From the snow-capped
+                    mountains of Skyrim to the neon-lit cityscapes of Cyberpunk
+                    2077, these shots embody the power of virtual photography.
+                  </p>
+                </div>
+                <div className="hidden md:flex flex-col justify-center">
+                  <div className="grid grid-cols-3 grid-rows-3 gap-4 max-h-screen">
+                    {top10sys.map((item, index) => {
+                      return (
+                        <div
+                          key={`${item.authorId}-${index}`}
+                          className={`
+                            relative load transition-all -translate-y-10 opacity-0 duration-500
+                            ${index === 0 ? "col-span-1 row-span-3" : ""}
+                          `}
+                        >
+                          <div className="absolute w-full h-full transition-all duration-500 opacity-100">
+                            <div
+                              className={`
+                            absolute bottom-0 left-0 right-0  p-4
+                            bg-gradient-to-t from-gray-900/80
+                          `}
+                            >
+                              <h3 className="text-white text-lg font-bold">
+                                {index + 1}. {item.value} shots
+                                <br />
+                                {item.gameName}
+                                <br />
+                              </h3>
+                              <p className="text-white text-sm">
+                                {item.authorNick}
+                              </p>
+                            </div>
+                          </div>
+                          <picture>
+                            <img
+                              className="rounded-md object-cover w-full h-full"
+                              alt={item.gameName}
+                              src={`${item.attachments?.replace(
+                                "https://cdn.discordapp.com",
+                                "https://media.discordapp.net",
+                              )}?width=1000&height=1000`}
+                            />
+                          </picture>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              className="min-h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500 mb-8"
+              ref={segments["Top 10 Games in the Hall of Framed"]}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
+                <div className="hidden md:flex flex-col justify-center">
+                  <div className="grid grid-cols-3 grid-rows-3 gap-4 max-h-screen">
+                    {top10hof.map((item, index) => {
+                      return (
+                        <div
+                          key={`${item.authorId}-${index}`}
+                          className={`
+                            relative load transition-all -translate-y-10 opacity-0 duration-500
+                            ${index === 0 ? "col-span-1 row-span-3" : ""}
+                          `}
+                        >
+                          <div className="absolute w-full h-full transition-all duration-500 opacity-100">
+                            <div
+                              className={`
+                            absolute bottom-0 left-0 right-0  p-4
+                            bg-gradient-to-t from-gray-900/50
+                          `}
+                            >
+                              <h3 className="text-white text-lg font-bold">
+                                {index + 1}. {item.value} shots
+                                <br />
+                                {item.gameName}
+                                <br />
+                              </h3>
+                              <p className="text-white text-sm">
+                                {item.authorNick}
+                              </p>
+                            </div>
+                          </div>
+                          <picture>
+                            <img
+                              className="rounded-md object-cover w-full h-full"
+                              alt={item.gameName}
+                              src={`${item.attachments?.replace(
+                                "https://cdn.discordapp.com",
+                                "https://media.discordapp.net",
+                              )}?width=1000&height=1000`}
+                            />
+                          </picture>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="flex flex-col justify-center">
+                  <h2 className="text-6xl font-bold mb-8">
+                    Top 10 Games in the Hall of Framed
+                  </h2>
+                  <p>
+                    It&apos;s been an amazing year for virtual photography and
+                    video game screenshots! We&apos;ve seen a plethora of
+                    stunning shots posted to the Hall of Framed, but here
+                    we&apos;d like to take a look at the top 10 shots of the
+                    past year.
+                  </p>
+                </div>
+              </div>
             </div>
             <div className="grid grid-rows-2 gap-y-4">
               <div className="grid grid-cols-2 load transition-all -translate-y-10 opacity-0 duration-500">
@@ -224,6 +429,7 @@ export default function Home({ grid }: { grid: IShot[] }) {
                         (shot) =>
                           shot.date.replace(/T.*$/g, "") === selectedDay,
                       ),
+                      8,
                     )}
                     tooltip={(d) => (
                       <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
@@ -249,6 +455,7 @@ export default function Home({ grid }: { grid: IShot[] }) {
                         new Date(shot.date).getTime() <=
                           new Date("2022-12-31").getTime(),
                     ),
+                    8,
                   )}
                   tooltip={(d) => (
                     <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
@@ -264,7 +471,9 @@ export default function Home({ grid }: { grid: IShot[] }) {
                 onClick={(data) => {
                   setSelectedDay(data.day);
                   if (typeof window !== "undefined") {
-                    scrollTo({ top: 0, behavior: "smooth" });
+                    segments["Daily Shots"].current?.scrollIntoView({
+                      behavior: "smooth",
+                    });
                   }
                 }}
                 data={calendarDataFormat(enabled ? hof : sys)}
@@ -283,14 +492,27 @@ export default function Home({ grid }: { grid: IShot[] }) {
 export const getStaticProps: GetStaticProps = async () => {
   const {
     grid,
+    hof,
   }: {
     grid: IShot[];
+    hof: IShot[];
   } = await fetcher(/* GraphQL */ `
     query {
       grid: shots(
         startDate: "2019-01-01"
         endDate: "2022-12-31"
         type: "sys"
+        format: "calendar"
+      ) {
+        attachments
+        authorNick
+        gameName
+        date
+      }
+      hof: shots(
+        startDate: "2019-01-01"
+        endDate: "2022-12-31"
+        type: "hof"
         format: "calendar"
       ) {
         attachments
@@ -307,6 +529,28 @@ export const getStaticProps: GetStaticProps = async () => {
         const randIdx = Math.floor(Math.random() * grid.length - 1);
         return grid[randIdx];
       }),
+      categoriesImages: Array.from(Array(3).keys()).map(() => {
+        const randIdx = Math.floor(Math.random() * grid.length - 1);
+        return grid[randIdx];
+      }),
+      top10sys: gameDistPie(grid, 11)
+        .map((item) => {
+          const gameList = grid.filter(
+            (shot) => shot.gameName === item.label && !!shot.attachments,
+          );
+          const randIdx = Math.floor(Math.random() * gameList.length - 1);
+          return { ...gameList[randIdx], ...item };
+        })
+        .filter((item) => !!item.attachments),
+      top10hof: gameDistPie(hof, 11)
+        .map((item) => {
+          const gameList = grid.filter(
+            (shot) => shot.gameName === item.label && !!shot.attachments,
+          );
+          const randIdx = Math.floor(Math.random() * gameList.length - 1);
+          return { ...gameList[randIdx], ...item };
+        })
+        .filter((item) => !!item.attachments),
     },
   };
 };

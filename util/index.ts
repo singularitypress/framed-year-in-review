@@ -25,7 +25,7 @@ export const calendarDataFormat = (data: IShot[]) => {
   );
 };
 
-export const gameDistPie = (data: IShot[]) => {
+export const gameDistPie = (data: IShot[], size: number) => {
   return Object.values(
     data.reduce((acc, shot) => {
       if (acc[shot.gameName]) {
@@ -42,12 +42,12 @@ export const gameDistPie = (data: IShot[]) => {
   )
     .sort((a, b) => b.value - a.value)
     .reduce((acc, shot, i) => {
-      if (i < 8) {
+      if (i < size) {
         return [...acc, shot];
       } else {
-        acc[7].id = "Other";
-        acc[7].label = "Other";
-        acc[7].value += shot.value;
+        acc[size - 1].id = "Other";
+        acc[size - 1].label = "Other";
+        acc[size - 1].value += shot.value;
         return acc;
       }
     }, [] as { id: string; label: string; value: number }[]);
