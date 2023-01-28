@@ -3,14 +3,85 @@ import React, { useEffect } from "react";
 import { IShot } from "@types";
 import { getDateLastYear, sequentialFadeIn } from "@util";
 import { Container } from "@components/global";
+import useSWR from "swr";
 
-const Home = ({ randShot }: { shots: IShot[]; randShot: IShot }) => {
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      sequentialFadeIn("home-img");
-      sequentialFadeIn("load");
+const fetcher = (query: string) =>
+  fetch(`${process.env.BASE_FETCH_URL}/api/graphql`, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({ query }),
+  })
+    .then((res) => res.json())
+    .then((json) => {
+      const data =
+        json.data.shots[Math.floor(Math.random() * json.data.shots.length)];
+
+      setTimeout(() => {
+        if (typeof window !== "undefined") {
+          sequentialFadeIn("bg-img");
+          sequentialFadeIn("load");
+        }
+      }, 100);
+
+      return data as IShot;
+    });
+
+const Home = () => {
+  const start = getDateLastYear();
+  const end = getDateLastYear(true);
+  const query = /* GraphQL */ `
+    query {
+      shots(
+        startDate: "${start.year}-${start.month}-${start.day}"
+        endDate: "${end.year}-${end.month}-${end.day}"
+        type: "sys"
+      ) {
+        attachments
+      }
     }
-  }, []);
+  `;
+
+  const { data, error, isLoading } = useSWR<IShot>(
+    /* GraphQL */ `
+      query {
+        shots(
+          startDate: "2019-01-01"
+          endDate: "2022-12-31"
+          type: "sys"
+          format: "calendar"
+        ) {
+          attachments
+        }
+      }
+    `,
+    fetcher,
+  );
+
+  if (isLoading) {
+    return (
+      <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+        Error: {error.message}
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+        Error: No data
+      </div>
+    );
+  }
 
   return (
     <>
@@ -37,7 +108,7 @@ const Home = ({ randShot }: { shots: IShot[]; randShot: IShot }) => {
           <img
             loading="lazy"
             className="home-img top-0 fixed transition-all -translate-y-10 opacity-0 duration-500 delay-1000 h-full md:h-screen object-cover w-full"
-            src={randShot?.attachments?.replace(
+            src={data.attachments?.replace(
               "https://cdn.discordapp.com",
               "https://media.discordapp.net",
             )}
@@ -50,46 +121,3 @@ const Home = ({ randShot }: { shots: IShot[]; randShot: IShot }) => {
 };
 
 export default Home;
-
-export const getStaticProps = async () => {
-  const fetcher = (query: string) =>
-    fetch(`${process.env.BASE_FETCH_URL}/api/graphql`, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({ query }),
-    })
-      .then((res) => res.json())
-      .then((json) => json.data);
-
-  const start = getDateLastYear();
-  const end = getDateLastYear(true);
-  const query = /* GraphQL */ `
-    query {
-      shots(
-        startDate: "${start.year}-${start.month}-${start.day}"
-        endDate: "${end.year}-${end.month}-${end.day}"
-        type: "sys"
-      ) {
-        attachments
-      }
-    }
-  `;
-
-  let { shots }: { shots: IShot[] } = await fetcher(query);
-  shots =
-    (shots ?? []).filter((shot: IShot) =>
-      shot.attachments?.startsWith("https"),
-    ) ?? [];
-
-  const len = shots.length;
-  const idx = Math.floor(Math.random() * len);
-
-  return {
-    props: {
-      shots,
-      randShot: shots[idx],
-    },
-  };
-};

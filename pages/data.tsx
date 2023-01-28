@@ -1,17 +1,16 @@
 import { IShot } from "@types";
 import Head from "next/head";
 import { CalendarTooltipProps } from "@nivo/calendar";
-import Select from "react-select";
 import { useEffect, useState, useRef, RefObject } from "react";
 import { calendarDataFormat, gameDistPie, sequentialFadeIn } from "@util";
 import { Calendar, Pie } from "@components/charts";
-import { GetStaticProps } from "next";
 import { Container, SegmentedControl } from "@components/global";
 import { DefaultRawDatum } from "@nivo/pie";
+import useSWR from "swr";
 
 interface Top10 extends IShot, DefaultRawDatum {}
 
-const fetcher = (query: string) =>
+const fetcher = (query: string, onComplete: () => void) =>
   fetch(`${process.env.BASE_FETCH_URL}/api/graphql`, {
     method: "POST",
     headers: {
@@ -20,7 +19,15 @@ const fetcher = (query: string) =>
     body: JSON.stringify({ query }),
   })
     .then((res) => res.json())
-    .then((json) => json.data);
+    .then((json) => {
+      setTimeout(() => {
+        if (typeof window !== "undefined") {
+          sequentialFadeIn("bg-img");
+          sequentialFadeIn("load");
+        }
+      }, 100);
+      return json.data;
+    });
 
 const CustomTooltip = (data: CalendarTooltipProps) => {
   return (
@@ -36,41 +43,9 @@ const CustomTooltip = (data: CalendarTooltipProps) => {
   );
 };
 
-export default function Home({
-  grid,
-  categoriesImages,
-  top10sys,
-  top10hof,
-}: {
-  grid: IShot[];
-  categoriesImages: IShot[];
-  top10sys: Top10[];
-  top10hof: Top10[];
-}) {
+export default function Home() {
   const [enabled, setEnabled] = useState(false);
   const [selectedDay, setSelectedDay] = useState("2021-12-25");
-  const [sys, setSys] = useState<IShot[]>([]);
-  const [hof, setHof] = useState<IShot[]>([]);
-
-  const sysGameNames = (
-    [
-      ...new Set(
-        sys
-          .map(({ gameName }: IShot) => gameName)
-          .sort((a: string, b: string) => {
-            const gameA = a.toLowerCase();
-            const gameB = b.toLowerCase();
-            if (gameA < gameB) {
-              return -1;
-            }
-            if (gameA > gameB) {
-              return 1;
-            }
-            return 0;
-          }),
-      ),
-    ] as string[]
-  ).map((item) => ({ label: item, value: item }));
 
   const segments: {
     [key: string]: RefObject<HTMLDivElement>;
@@ -84,11 +59,18 @@ export default function Home({
     Calendar: useRef<HTMLDivElement>(null),
   };
 
-  const getShots = async () => {
-    const data: {
-      sys: IShot[];
-      hof: IShot[];
-    } = await fetcher(/* GraphQL */ `
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      sequentialFadeIn("bg-img");
+      sequentialFadeIn("load");
+    }
+  }, []);
+
+  const { data, error, isLoading } = useSWR<{
+    sys: IShot[];
+    hof: IShot[];
+  }>(
+    /* GraphQL */ `
       query {
         sys: shots(
           startDate: "2019-01-01"
@@ -113,20 +95,60 @@ export default function Home({
           date
         }
       }
-    `);
+    `,
+    fetcher,
+  );
 
-    setSys(data.sys);
-    setHof(data.hof);
-  };
+  if (isLoading) {
+    return (
+      <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+        Loading...
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      sequentialFadeIn("bg-img");
-      sequentialFadeIn("load");
+  if (error) {
+    return (
+      <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+        Error: {error.message}
+      </div>
+    );
+  }
 
-      getShots();
-    }
-  }, []);
+  if (!data) {
+    return (
+      <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+        Error: No data
+      </div>
+    );
+  }
+
+  const grid: IShot[] = Array.from(Array(9).keys()).map(() => {
+    const randIdx = Math.floor(Math.random() * data.sys.length - 1);
+    return data.sys[randIdx];
+  });
+  const categoriesImages: IShot[] = Array.from(Array(3).keys()).map(() => {
+    const randIdx = Math.floor(Math.random() * data.sys.length - 1);
+    return data.sys[randIdx];
+  });
+  const top10sys = gameDistPie(data.sys, 11)
+    .map((item) => {
+      const gameList = data.sys.filter(
+        (shot) => shot.gameName === item.label && !!shot.attachments,
+      );
+      const randIdx = Math.floor(Math.random() * gameList.length - 1);
+      return { ...gameList[randIdx], ...item };
+    })
+    .filter((item) => !!item.attachments);
+  const top10hof = gameDistPie(data.hof, 11)
+    .map((item) => {
+      const gameList = data.sys.filter(
+        (shot) => shot.gameName === item.label && !!shot.attachments,
+      );
+      const randIdx = Math.floor(Math.random() * gameList.length - 1);
+      return { ...gameList[randIdx], ...item };
+    })
+    .filter((item) => !!item.attachments);
 
   return (
     <>
@@ -145,7 +167,9 @@ export default function Home({
                   <SegmentedControl
                     data={["Share Your Shot", "Hall of Framed"]}
                     selected={enabled ? "Hall of Framed" : "Share Your Shot"}
-                    onChange={(data) => setEnabled(data === "Hall of Framed")}
+                    onChange={(section) =>
+                      setEnabled(section === "Hall of Framed")
+                    }
                   />
                 </div>
               </div>
@@ -425,7 +449,7 @@ export default function Home({
                 <div className="h-96">
                   <Pie
                     data={gameDistPie(
-                      ((enabled ? hof : sys) as IShot[]).filter(
+                      ((enabled ? data.hof : data.sys) as IShot[]).filter(
                         (shot) =>
                           shot.date.replace(/T.*$/g, "") === selectedDay,
                       ),
@@ -448,7 +472,7 @@ export default function Home({
                 </h2>
                 <Pie
                   data={gameDistPie(
-                    ((enabled ? hof : sys) as IShot[]).filter(
+                    ((enabled ? data.hof : data.sys) as IShot[]).filter(
                       (shot) =>
                         new Date(shot.date).getTime() >=
                           new Date("2021-12-25").getTime() &&
@@ -476,7 +500,7 @@ export default function Home({
                     });
                   }
                 }}
-                data={calendarDataFormat(enabled ? hof : sys)}
+                data={calendarDataFormat(enabled ? data.hof : data.sys)}
                 from={new Date("2021-12-25")}
                 to={new Date("2022-12-31")}
                 tooltip={CustomTooltip}
@@ -488,69 +512,3 @@ export default function Home({
     </>
   );
 }
-
-export const getStaticProps: GetStaticProps = async () => {
-  const {
-    grid,
-    hof,
-  }: {
-    grid: IShot[];
-    hof: IShot[];
-  } = await fetcher(/* GraphQL */ `
-    query {
-      grid: shots(
-        startDate: "2019-01-01"
-        endDate: "2022-12-31"
-        type: "sys"
-        format: "calendar"
-      ) {
-        attachments
-        authorNick
-        gameName
-        date
-      }
-      hof: shots(
-        startDate: "2019-01-01"
-        endDate: "2022-12-31"
-        type: "hof"
-        format: "calendar"
-      ) {
-        attachments
-        authorNick
-        gameName
-        date
-      }
-    }
-  `);
-
-  return {
-    props: {
-      grid: Array.from(Array(9).keys()).map(() => {
-        const randIdx = Math.floor(Math.random() * grid.length - 1);
-        return grid[randIdx];
-      }),
-      categoriesImages: Array.from(Array(3).keys()).map(() => {
-        const randIdx = Math.floor(Math.random() * grid.length - 1);
-        return grid[randIdx];
-      }),
-      top10sys: gameDistPie(grid, 11)
-        .map((item) => {
-          const gameList = grid.filter(
-            (shot) => shot.gameName === item.label && !!shot.attachments,
-          );
-          const randIdx = Math.floor(Math.random() * gameList.length - 1);
-          return { ...gameList[randIdx], ...item };
-        })
-        .filter((item) => !!item.attachments),
-      top10hof: gameDistPie(hof, 11)
-        .map((item) => {
-          const gameList = grid.filter(
-            (shot) => shot.gameName === item.label && !!shot.attachments,
-          );
-          const randIdx = Math.floor(Math.random() * gameList.length - 1);
-          return { ...gameList[randIdx], ...item };
-        })
-        .filter((item) => !!item.attachments),
-    },
-  };
-};
