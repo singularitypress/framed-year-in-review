@@ -2,8 +2,13 @@ import Head from "next/head";
 import React, { useEffect } from "react";
 import { IShot } from "@types";
 import { getDateLastYear, sequentialFadeIn } from "@util";
-import { Container } from "@components/global";
+import { Container, LoadWrapper } from "@components/global";
 import useSWR from "swr";
+import {
+  ErrorNoData,
+  ErrorSection,
+  LoadingSection,
+} from "@components/experience-fragments";
 
 const fetcher = (query: string) =>
   fetch(`${process.env.BASE_FETCH_URL}/api/graphql`, {
@@ -15,16 +20,8 @@ const fetcher = (query: string) =>
   })
     .then((res) => res.json())
     .then((json) => {
-      const data =
-        json.data.shots[Math.floor(Math.random() * json.data.shots.length)];
-
-      setTimeout(() => {
-        if (typeof window !== "undefined") {
-          sequentialFadeIn("bg-img");
-          sequentialFadeIn("load");
-        }
-      }, 100);
-
+      const len = json.data.shots.length;
+      const data = json.data.shots[Math.floor(Math.random() * len - 1)];
       return data as IShot;
     });
 
@@ -43,44 +40,18 @@ const Home = () => {
     }
   `;
 
-  const { data, error, isLoading } = useSWR<IShot>(
-    /* GraphQL */ `
-      query {
-        shots(
-          startDate: "2019-01-01"
-          endDate: "2022-12-31"
-          type: "sys"
-          format: "calendar"
-        ) {
-          attachments
-        }
-      }
-    `,
-    fetcher,
-  );
+  const { data, error, isLoading } = useSWR<IShot>(query, fetcher);
 
   if (isLoading) {
-    return (
-      <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
-        Loading...
-      </div>
-    );
+    return <LoadingSection />;
   }
 
   if (error) {
-    return (
-      <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
-        Error: {error.message}
-      </div>
-    );
+    return <ErrorSection message={error.message} />;
   }
 
   if (!data) {
-    return (
-      <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
-        Error: No data
-      </div>
-    );
+    return <ErrorNoData />;
   }
 
   return (
@@ -88,34 +59,36 @@ const Home = () => {
       <Head>
         <title>Home</title>
       </Head>
-      <main>
-        <div className="absolute z-20 w-full">
-          <Container className="grid grid-rows-2 md:grid-rows-none md:grid-cols-2 gap-0 h-screen md:h-auto">
-            <div className="h-full md:h-screen flex flex-col justify-center pr-4 md:pr-10 md:text-right">
-              <h1 className="font-bold text-6xl md:text-8x1 lg:text-8xl load transition-all -translate-y-10 opacity-0 duration-500">
-                Framed
-              </h1>
-              <h2 className="text-2xl font-bold load transition-all -translate-y-10 opacity-0 duration-500">
-                Year in Review 2023
-              </h2>
-            </div>
-          </Container>
-        </div>
-        <div className="grid z-10 md:grid-rows-none md:grid-cols-2 gap-0 h-screen md:h-auto">
-          <div className="h-full z-10 md:h-screen flex flex-col justify-center bg-black/30 backdrop-blur-3xl border-r border-r-white/10 shadow-2xl"></div>
-        </div>
-        <picture>
-          <img
-            loading="lazy"
-            className="home-img top-0 fixed transition-all -translate-y-10 opacity-0 duration-500 delay-1000 h-full md:h-screen object-cover w-full"
-            src={data.attachments?.replace(
-              "https://cdn.discordapp.com",
-              "https://media.discordapp.net",
-            )}
-            alt="Landscape picture"
-          />
-        </picture>
-      </main>
+      <LoadWrapper>
+        <main>
+          <div className="absolute z-20 w-full">
+            <Container className="grid grid-rows-2 md:grid-rows-none md:grid-cols-2 gap-0 h-screen md:h-auto">
+              <div className="h-full md:h-screen flex flex-col justify-center pr-4 md:pr-10 md:text-right">
+                <h1 className="font-bold text-6xl md:text-8x1 lg:text-8xl load transition-all -translate-y-10 opacity-0 duration-500">
+                  Framed
+                </h1>
+                <h2 className="text-2xl font-bold load transition-all -translate-y-10 opacity-0 duration-500">
+                  Year in Review 2023
+                </h2>
+              </div>
+            </Container>
+          </div>
+          <div className="grid z-10 md:grid-rows-none md:grid-cols-2 gap-0 h-screen md:h-auto">
+            <div className="h-full z-10 md:h-screen flex flex-col justify-center bg-black/30 backdrop-blur-3xl border-r border-r-white/10 shadow-2xl"></div>
+          </div>
+          <picture>
+            <img
+              loading="lazy"
+              className="load top-0 fixed transition-all -translate-y-10 opacity-0 duration-500 h-full md:h-screen object-cover w-full"
+              src={`${data.attachments?.replace(
+                "https://cdn.discordapp.com",
+                "https://media.discordapp.net",
+              )}?width=1920&height=1080`}
+              alt="Landscape picture"
+            />
+          </picture>
+        </main>
+      </LoadWrapper>
     </>
   );
 };
