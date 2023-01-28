@@ -6,9 +6,6 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
-  env: {
-    BASE_FETCH_URL: "http://localhost:3000"
-  }
 };
 
 module.exports = nextConfig;

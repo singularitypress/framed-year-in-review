@@ -1,7 +1,7 @@
 import Head from "next/head";
-import React, { useEffect } from "react";
+import React from "react";
 import { IShot } from "@types";
-import { getDateLastYear, sequentialFadeIn } from "@util";
+import { getDateLastYear } from "@util";
 import { Container, LoadWrapper } from "@components/global";
 import useSWR from "swr";
 import {
@@ -11,7 +11,7 @@ import {
 } from "@components/experience-fragments";
 
 const fetcher = (query: string) =>
-  fetch(`${process.env.BASE_FETCH_URL}/api/graphql`, {
+  fetch(`/api/graphql`, {
     method: "POST",
     headers: {
       "Content-type": "application/json",

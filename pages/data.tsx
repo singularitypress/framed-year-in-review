@@ -4,12 +4,7 @@ import { CalendarTooltipProps } from "@nivo/calendar";
 import { useEffect, useState, useRef, RefObject } from "react";
 import { calendarDataFormat, gameDistPie, sequentialFadeIn } from "@util";
 import { Calendar, Pie } from "@components/charts";
-import {
-  Container,
-  SegmentedControl,
-  LoadWrapper,
-  LoadingSpinner,
-} from "@components/global";
+import { Container, SegmentedControl, LoadWrapper } from "@components/global";
 import useSWR from "swr";
 import {
   ErrorNoData,
@@ -18,7 +13,7 @@ import {
 } from "@components/experience-fragments";
 
 const fetcher = (query: string, onComplete: () => void) =>
-  fetch(`${process.env.BASE_FETCH_URL}/api/graphql`, {
+  fetch(`/api/graphql`, {
     method: "POST",
     headers: {
       "Content-type": "application/json",
