@@ -2,17 +2,29 @@ import { IShot } from "@types";
 import Head from "next/head";
 import { CalendarTooltipProps } from "@nivo/calendar";
 import { useEffect, useState, useRef, RefObject } from "react";
-import { calendarDataFormat, gameDistPie, sequentialFadeIn } from "@util";
+import {
+  calendarDataFormat,
+  COLOURS,
+  gameDistPie,
+  sequentialFadeIn,
+} from "@util";
 import { Calendar, Pie } from "@components/charts";
-import { Container, SegmentedControl, LoadWrapper } from "@components/global";
+import { Container, LoadWrapper, Modal } from "@components/global";
 import useSWR from "swr";
 import {
   ErrorNoData,
   ErrorSection,
   LoadingSection,
 } from "@components/experience-fragments";
+import randomColor from "randomcolor";
 
-const fetcher = (query: string, onComplete: () => void) =>
+interface CalendarPieTooltip extends CalendarTooltipProps {
+  data: {
+    shots: IShot[];
+  };
+}
+
+const fetcher = (query: string) =>
   fetch(`/api/graphql`, {
     method: "POST",
     headers: {
@@ -37,9 +49,32 @@ const CustomTooltip = (data: CalendarTooltipProps) => {
   );
 };
 
+const ModalContent = ({ data }: { data: CalendarTooltipProps }) => {
+  return (
+    <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md h-96 aspect-video">
+      {new Date(data.day).toLocaleDateString("en-US", {
+        timeZone: "UTC",
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })}
+      : <strong>{data.value}</strong>
+      <Pie
+        data={gameDistPie((data as CalendarPieTooltip).data.shots, 11)}
+        tooltip={(d) => (
+          <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+            {d.datum.label}: <strong>{d.datum.value}</strong> shots
+          </div>
+        )}
+      />
+    </div>
+  );
+};
+
 export default function Home() {
   const [enabled, setEnabled] = useState(false);
-  const [selectedDay, setSelectedDay] = useState("2021-12-25");
+  const [visible, setVisible] = useState(false);
+  const [calendarDatum, setCalendarDatum] = useState<CalendarTooltipProps>();
 
   const segments: {
     [key: string]: RefObject<HTMLDivElement>;
@@ -49,6 +84,7 @@ export default function Home() {
     "Most Active Day in Share Your Shot": useRef<HTMLDivElement>(null),
     "Most Active Day in the Hall of Framed": useRef<HTMLDivElement>(null),
     "Daily Shots": useRef<HTMLDivElement>(null),
+    "Daily Hall of Framed": useRef<HTMLDivElement>(null),
     "Full Year": useRef<HTMLDivElement>(null),
     Calendar: useRef<HTMLDivElement>(null),
   };
@@ -140,27 +176,12 @@ export default function Home() {
       </Head>
       <LoadWrapper>
         <main className="relative">
-          <div className="calendar relative z-10 backdrop-blur-3xl bg-gray-900/75">
-            <div className="sticky top-20 z-30">
-              <Container>
-                <div className="load transition-all -translate-y-10 opacity-0 duration-500 w-fit flex flex-col md:flex-row">
-                  <div className="mb-4 md:mr-4 md:mb-0">
-                    <SegmentedControl
-                      data={["Share Your Shot", "Hall of Framed"]}
-                      selected={enabled ? "Hall of Framed" : "Share Your Shot"}
-                      onChange={(section) =>
-                        setEnabled(section === "Hall of Framed")
-                      }
-                    />
-                  </div>
-                </div>
-              </Container>
-            </div>
+          <div className="relative z-10 backdrop-blur-3xl bg-gray-900/75">
             <Container className="pt-8 -translate-y-20">
-              <div className="h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500">
+              <div className="max-h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500 mb-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
                   <div className="flex flex-col justify-center">
-                    <h1 className="font-bold text-7xl">
+                    <h1 className="font-bold text-7xl mb-8">
                       Welcome to Framed&apos;s 2022 in Review!
                     </h1>
                     <br />
@@ -181,7 +202,7 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="hidden md:flex flex-col justify-center">
-                    <div className="grid grid-cols-3 gap-4 aspect-square">
+                    <div className="grid grid-cols-3 gap-4 aspect-square mt-32">
                       {grid.map((item, index) => {
                         return (
                           <div
@@ -192,12 +213,14 @@ export default function Home() {
                               <p
                                 className={`
                             absolute bottom-0 left-0 right-0 text-white text-sm p-4
-                            bg-gradient-to-t from-gray-900
+                            bg-gradient-to-t from-gray-900/75
                           `}
                               >
-                                {item.authorNick}
-                                <br />
                                 {item.gameName}
+                                <br />
+                                <span className="text-white/75 text-xs">
+                                  {item.authorNick}
+                                </span>
                               </p>
                             </div>
                             <picture>
@@ -229,13 +252,15 @@ export default function Home() {
                           <div className="absolute w-full h-full transition-all duration-500 opacity-0 translate-y-5 hover:opacity-100 hover:translate-y-0">
                             <p
                               className={`
-                            absolute bottom-0 left-0 right-0 text-white text-sm p-4
-                            bg-gradient-to-t from-gray-900
+                            absolute bottom-0 left-0 right-0 p-4
+                            bg-gradient-to-t from-gray-900/75
                           `}
                             >
-                              {item.authorNick}
-                              <br />
                               {item.gameName}
+                              <br />
+                              <span className="text-white/75 text-xs text-right">
+                                {item.authorNick}
+                              </span>
                             </p>
                           </div>
                           <picture>
@@ -320,7 +345,7 @@ export default function Home() {
                               <div
                                 className={`
                             absolute bottom-0 left-0 right-0  p-4
-                            bg-gradient-to-t from-gray-900/80
+                            bg-gradient-to-t from-gray-900/75
                           `}
                               >
                                 <h3 className="text-white text-lg font-bold">
@@ -329,7 +354,7 @@ export default function Home() {
                                   {item.gameName}
                                   <br />
                                 </h3>
-                                <p className="text-white text-sm">
+                                <p className="text-white/75 text-xs text-right">
                                   {item.authorNick}
                                 </p>
                               </div>
@@ -370,8 +395,8 @@ export default function Home() {
                             <div className="absolute w-full h-full transition-all duration-500 opacity-100">
                               <div
                                 className={`
-                            absolute bottom-0 left-0 right-0  p-4
-                            bg-gradient-to-t from-gray-900/50
+                            absolute bottom-0 left-0 right-0 p-4
+                            bg-gradient-to-t from-gray-900/75
                           `}
                               >
                                 <h3 className="text-white text-lg font-bold">
@@ -380,7 +405,7 @@ export default function Home() {
                                   {item.gameName}
                                   <br />
                                 </h3>
-                                <p className="text-white text-sm">
+                                <p className="text-white/75 text-xs text-right">
                                   {item.authorNick}
                                 </p>
                               </div>
@@ -414,76 +439,62 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="grid grid-rows-2 gap-y-4">
-                <div className="grid grid-cols-2 load transition-all -translate-y-10 opacity-0 duration-500">
-                  <div ref={segments["Daily Shots"]}>
-                    <h2 className="text-2xl">
-                      <strong>
-                        Day:{" "}
-                        {new Date(selectedDay).toLocaleDateString("en-US", {
-                          timeZone: "UTC",
-                          month: "long",
-                          day: "2-digit",
-                          year: "numeric",
-                        })}
-                      </strong>
+              <div className="max-h-screen">
+                <div
+                  className="load transition-all -translate-y-10 opacity-0 duration-500 w-full"
+                  ref={segments["Full Year"]}
+                >
+                  <div className="h-screen flex flex-col items-center">
+                    <h2 className="text-6xl font-bold col-span-2 mb-8">
+                      Hall of Framed
                     </h2>
-                  </div>
-                  <div className="h-96">
                     <Pie
                       data={gameDistPie(
-                        ((enabled ? data.hof : data.sys) as IShot[]).filter(
+                        (data.hof as IShot[]).filter(
                           (shot) =>
-                            shot.date.replace(/T.*$/g, "") === selectedDay,
+                            new Date(shot.date).getTime() >=
+                              new Date("2021-12-25").getTime() &&
+                            new Date(shot.date).getTime() <=
+                              new Date("2022-12-31").getTime(),
                         ),
-                        8,
+                        11,
                       )}
                       tooltip={(d) => (
                         <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
-                          {d.datum.label}: <strong>{d.datum.value}</strong>
+                          {d.datum.label}: <strong>{d.datum.value}</strong>{" "}
+                          shots
                         </div>
                       )}
                     />
                   </div>
                 </div>
-                <div
-                  className="grid grid-cols-2 load transition-all -translate-y-10 opacity-0 duration-500"
-                  ref={segments["Full Year"]}
-                >
-                  <h2 className="text-2xl">
-                    <strong>Full year</strong>
-                  </h2>
-                  <Pie
-                    data={gameDistPie(
-                      ((enabled ? data.hof : data.sys) as IShot[]).filter(
-                        (shot) =>
-                          new Date(shot.date).getTime() >=
-                            new Date("2021-12-25").getTime() &&
-                          new Date(shot.date).getTime() <=
-                            new Date("2022-12-31").getTime(),
-                      ),
-                      8,
-                    )}
-                    tooltip={(d) => (
-                      <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
-                        {d.datum.label}: <strong>{d.datum.value}</strong>
-                      </div>
-                    )}
-                  />
-                </div>
               </div>
 
-              <div className="h-screen lg:h-96" ref={segments.Calendar}>
+              <div
+                className="calendar min-h-screen lg:h-96"
+                ref={segments["Daily Shots"]}
+              >
                 <Calendar
-                  onClick={(data) => {
-                    setSelectedDay(data.day);
-                    if (typeof window !== "undefined") {
-                      segments["Daily Shots"].current?.scrollIntoView({
-                        behavior: "smooth",
-                      });
-                    }
+                  data={calendarDataFormat(data.sys)}
+                  onClick={(d) => {
+                    setCalendarDatum(d as any as CalendarTooltipProps);
+                    setVisible(true);
                   }}
-                  data={calendarDataFormat(enabled ? data.hof : data.sys)}
+                  from={new Date("2021-12-25")}
+                  to={new Date("2022-12-31")}
+                  tooltip={CustomTooltip}
+                />
+              </div>
+              <div
+                className="calendar min-h-screen lg:h-96"
+                ref={segments["Daily Hall of Framed"]}
+              >
+                <Calendar
+                  data={calendarDataFormat(data.hof)}
+                  onClick={(d) => {
+                    setCalendarDatum(d as any as CalendarTooltipProps);
+                    setVisible(true);
+                  }}
                   from={new Date("2021-12-25")}
                   to={new Date("2022-12-31")}
                   tooltip={CustomTooltip}
@@ -493,6 +504,15 @@ export default function Home() {
           </div>
         </main>
       </LoadWrapper>
+      <Modal
+        open={visible}
+        onClose={() => {
+          setVisible(false);
+          setCalendarDatum(undefined);
+        }}
+      >
+        {calendarDatum && <ModalContent data={calendarDatum} />}
+      </Modal>
     </>
   );
 }

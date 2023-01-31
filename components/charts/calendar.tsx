@@ -19,11 +19,11 @@ export const Calendar = (props: Omit<CalendarSvgProps, "height" | "width">) => {
       dayBorderWidth={2}
       legends={[
         {
-          anchor: "left",
-          direction: "column",
-          itemCount: 4,
+          anchor: "top",
+          direction: "row",
+          itemCount: 8,
           itemWidth: 42,
-          itemHeight: 36,
+          itemHeight: 150,
           itemsSpacing: 14,
           itemDirection: "right-to-left",
           itemTextColor: "#FFF",

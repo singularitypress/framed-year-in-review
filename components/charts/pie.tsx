@@ -1,5 +1,7 @@
 import { ResponsivePie, PieSvgProps, DefaultRawDatum } from "@nivo/pie";
 import React from "react";
+import randomcolor from "randomcolor";
+import { COLOURS } from "@util";
 
 export const Pie = (
   props: Omit<PieSvgProps<DefaultRawDatum>, "width" | "height">,
@@ -13,16 +15,7 @@ export const Pie = (
       cornerRadius={4}
       activeOuterRadiusOffset={8}
       borderWidth={0}
-      colors={[
-        "#003f5c",
-        "#2f4b7c",
-        "#665191",
-        "#a05195",
-        "#d45087",
-        "#f95d6a",
-        "#ff7c43",
-        "#ffa600",
-      ].reverse()}
+      colors={COLOURS.PIE_11}
       borderColor={{
         from: "color",
         modifiers: [["darker", 0.2]],

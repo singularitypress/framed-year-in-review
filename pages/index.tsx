@@ -68,7 +68,7 @@ const Home = () => {
                   Framed
                 </h1>
                 <h2 className="text-2xl font-bold load transition-all -translate-y-10 opacity-0 duration-500">
-                  Year in Review 2023
+                  Year in Review 2022
                 </h2>
               </div>
             </Container>

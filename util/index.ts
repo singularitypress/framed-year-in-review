@@ -81,3 +81,29 @@ export const getDateLastYear = (tomorrow = false) => {
       lastYear.getDate() < 10 ? `0${lastYear.getDate()}` : lastYear.getDate(),
   };
 };
+
+export const COLOURS = {
+  HEAT_8: [
+    "#003f5c",
+    "#2f4b7c",
+    "#665191",
+    "#a05195",
+    "#d45087",
+    "#f95d6a",
+    "#ff7c43",
+    "#ffa600",
+  ].reverse(),
+  PIE_11: [
+    "#ff8811",
+    "#f4d06f",
+    "#483D3F",
+    "#9dd9d2",
+    "#392f5a",
+    "#5fad56",
+    "#f2c14e",
+    "#f78154",
+    "#4d9078",
+    "#b4436c",
+    "#314CB6",
+  ],
+};
