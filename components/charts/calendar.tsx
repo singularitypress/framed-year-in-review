@@ -23,7 +23,7 @@ export const Calendar = (props: Omit<CalendarSvgProps, "height" | "width">) => {
           direction: "row",
           itemCount: 8,
           itemWidth: 42,
-          itemHeight: 150,
+          itemHeight: 0,
           itemsSpacing: 14,
           itemDirection: "right-to-left",
           itemTextColor: "#FFF",

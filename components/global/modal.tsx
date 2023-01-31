@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 /**
  * @name Modal
@@ -18,6 +18,18 @@ export const Modal = ({
   open: boolean;
   onClose: () => void;
 }): React.ReactElement => {
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => {
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, [open]);
+
   return (
     <div
       className={`fixed transition-all duration-500 ${
