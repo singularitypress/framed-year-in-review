@@ -668,11 +668,17 @@ export default function Home() {
                         })}
                       </h3>
                       <p>
-                        It&apos;s been an amazing year for virtual photography
-                        and video game screenshots! We&apos;ve seen a plethora
-                        of stunning shots posted to the Hall of Framed, but here
-                        we&apos;d like to take a look at the top 10 shots of the
-                        past year.
+                        Players were eager to capture the stunning vistas and
+                        gritty towns of Red Dead Redemption 2, the neon-lit
+                        futuristic world of Cyberpunk 2077, and the mysterious
+                        forest landscapes of The Pathless. Whether it was
+                        showcasing the realism of the Wild West or exploring a
+                        futuristic metropolis, players were able to express
+                        their creativity and passion for virtual photography.
+                        With such a diverse range of games and a community of
+                        talented photographers, the Hall of Framed was
+                        definitely the place to be for all things virtual
+                        photography in 2022!
                       </p>
                     </div>
                     <div className="aspect-video">
