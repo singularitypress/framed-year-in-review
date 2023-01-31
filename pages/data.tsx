@@ -1,13 +1,8 @@
 import { IShot } from "@types";
 import Head from "next/head";
 import { CalendarTooltipProps } from "@nivo/calendar";
-import { useEffect, useState, useRef, RefObject } from "react";
-import {
-  calendarDataFormat,
-  COLOURS,
-  gameDistPie,
-  sequentialFadeIn,
-} from "@util";
+import { useState, useRef, RefObject } from "react";
+import { calendarDataFormat, gameDistPie } from "@util";
 import { Calendar, Pie } from "@components/charts";
 import { Container, LoadWrapper, Modal } from "@components/global";
 import useSWR from "swr";
@@ -402,7 +397,7 @@ export default function Home() {
                                 src={`${item.attachments?.replace(
                                   "https://cdn.discordapp.com",
                                   "https://media.discordapp.net",
-                                )}?width=1000&height=1000`}
+                                )}?width=600&height=600`}
                               />
                             </picture>
                           </div>
@@ -453,7 +448,7 @@ export default function Home() {
                                 src={`${item.attachments?.replace(
                                   "https://cdn.discordapp.com",
                                   "https://media.discordapp.net",
-                                )}?width=1000&height=1000`}
+                                )}?width=600&height=600`}
                               />
                             </picture>
                           </div>
@@ -642,7 +637,7 @@ export default function Home() {
                                 src={`${item.attachments?.replace(
                                   "https://cdn.discordapp.com",
                                   "https://media.discordapp.net",
-                                )}?width=1000&height=1000`}
+                                )}?width=600&height=600`}
                               />
                             </picture>
                           </div>
