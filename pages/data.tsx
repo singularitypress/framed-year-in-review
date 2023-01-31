@@ -153,6 +153,9 @@ export default function Home() {
       (shot) => shot.gameName === item.label && !!shot.attachments,
     );
     const randIdx = Math.floor(Math.random() * gameList.length - 1);
+    if (!gameList[randIdx]) {
+      return { ...gameList[0], ...item };
+    }
     return { ...gameList[randIdx], ...item };
   });
 
@@ -164,6 +167,9 @@ export default function Home() {
       (shot) => shot.gameName === item.label && !!shot.attachments,
     );
     const randIdx = Math.floor(Math.random() * gameList.length - 1);
+    if (!gameList[randIdx]) {
+      return { ...gameList[0], ...item };
+    }
     return { ...gameList[randIdx], ...item };
   });
 
