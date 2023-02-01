@@ -45,7 +45,7 @@ const CustomTooltip = (data: CalendarTooltipProps) => {
 
 const ModalContent = ({ data }: { data: CalendarTooltipProps }) => {
   return (
-    <div className="bg-framed-black text-white py-1 px-3 rounded-md shadow-md h-96 aspect-video">
+    <div className="bg-framed-black text-white py-1 px-3 rounded-md h-96 aspect-video">
       {new Date(data.day).toLocaleDateString("en-US", {
         timeZone: "UTC",
         day: "2-digit",
@@ -227,7 +227,7 @@ export default function Home() {
                               <p
                                 className={`
                             absolute bottom-0 left-0 right-0 text-white text-sm p-4
-                            bg-gradient-to-t from-gray-900/75
+                            bg-gradient-to-t from-framed-black/75
                           `}
                               >
                                 {item.gameName}
@@ -267,7 +267,7 @@ export default function Home() {
                             <p
                               className={`
                             absolute bottom-0 left-0 right-0 p-4
-                            bg-gradient-to-t from-gray-900/75
+                            bg-gradient-to-t from-framed-black/75
                           `}
                             >
                               {item.gameName}
@@ -381,7 +381,7 @@ export default function Home() {
                               <div
                                 className={`
                             absolute bottom-0 left-0 right-0  p-4
-                            bg-gradient-to-t from-gray-900/75
+                            bg-gradient-to-t from-framed-black/75
                           `}
                               >
                                 <p className="text-white font-bold">
@@ -432,7 +432,7 @@ export default function Home() {
                               <div
                                 className={`
                             absolute bottom-0 left-0 right-0 p-4
-                            bg-gradient-to-t from-gray-900/75
+                            bg-gradient-to-t from-framed-black/75
                           `}
                               >
                                 <p className="text-white font-bold">
@@ -567,7 +567,7 @@ export default function Home() {
                               <div
                                 className={`
                             absolute bottom-0 left-0 right-0  p-4
-                            bg-gradient-to-t from-gray-900/75
+                            bg-gradient-to-t from-framed-black/75
                           `}
                               >
                                 <p className="text-white font-bold">
@@ -621,7 +621,7 @@ export default function Home() {
                               <div
                                 className={`
                             absolute bottom-0 left-0 right-0 p-4
-                            bg-gradient-to-t from-gray-900/75
+                            bg-gradient-to-t from-framed-black/75
                           `}
                               >
                                 <p className="text-white font-bold">
