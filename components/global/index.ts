@@ -4,3 +4,4 @@ export * from "./segmented-control";
 export * from "./load-wrapper";
 export * from "./loading-spinner";
 export * from "./modal";
+export * from "./footer";

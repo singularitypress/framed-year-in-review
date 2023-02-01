@@ -192,11 +192,11 @@ export default function Home() {
       <LoadWrapper>
         <main className="relative">
           <div className="relative z-10 bg-framed-black/60">
-            <Container className="pt-8 -translate-y-20">
-              <div className="min-h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500 mb-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
+            <Container className="pt-20 md:pt-0">
+              <div className="min-h-screen md:flex md:items-center load transition-all -translate-y-10 opacity-0 duration-500 mb-8">
+                <div className="md:grid md:grid-cols-2 md:gap-x-16">
                   <div className="flex flex-col justify-center">
-                    <h1 className="font-bold text-7xl mb-8">
+                    <h1 className="font-bold text-4xl md:text-7xl md:mb-8">
                       Welcome to Framed&apos;s 2022 in Review!
                     </h1>
                     <br />
@@ -215,8 +215,8 @@ export default function Home() {
                       imagery of the past year.
                     </p>
                   </div>
-                  <div className="hidden md:flex flex-col justify-center">
-                    <div className="grid grid-cols-3 gap-4 aspect-square mt-32">
+                  <div className="flex flex-col justify-center">
+                    <div className="grid grid-cols-3 gap-4 aspect-square mt-8 md:mt-32">
                       {grid.map((item, index) => {
                         return (
                           <div
@@ -254,7 +254,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="h-screen flex flex-col justify-center load transition-all -translate-y-10 opacity-0 duration-500">
+              <div className="min-h-screen flex flex-col justify-center load transition-all -translate-y-10 opacity-0 duration-500 mb-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
                   <div className="hidden md:grid grid-cols-3 max-h-screen">
                     {categoriesImages.map((item, index) => {
@@ -331,9 +331,9 @@ export default function Home() {
                 ref={segments["Top 10 Games in Share Your Shot"]}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
-                  <div className="grid grid-rows-2 gap-y-8">
+                  <div className="md:grid md:grid-rows-2 md:gap-y-8 mb-16 md:mb-0">
                     <div className="h-full flex flex-col justify-end">
-                      <h2 className="text-6xl font-bold mb-8">
+                      <h2 className="md:text-6xl text-3xl font-bold mb-8">
                         Top 10 Games in Share Your Shot
                       </h2>
                       <p>
@@ -345,7 +345,7 @@ export default function Home() {
                         photography.
                       </p>
                     </div>
-                    <div className="aspect-video">
+                    <div className="aspect-video hidden md:block">
                       <Pie
                         data={gameDistPie(
                           (data.sys as IShot[]).filter(
@@ -366,7 +366,7 @@ export default function Home() {
                       />
                     </div>
                   </div>
-                  <div className="hidden md:flex flex-col justify-center">
+                  <div className="flex flex-col justify-center">
                     <div className="grid grid-cols-3 grid-rows-3 gap-4 max-h-screen">
                       {top10sys.map((item, index) => {
                         return (
@@ -384,7 +384,7 @@ export default function Home() {
                             bg-gradient-to-t from-framed-black/75
                           `}
                               >
-                                <p className="text-white font-bold">
+                                <p className="text-white font-bold text-xs md:text-base">
                                   {index + 1}: {item.value} shots
                                   <br />
                                   {item.gameName}
@@ -416,8 +416,8 @@ export default function Home() {
                 className="min-h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500 mb-8"
                 ref={segments["Top 10 Games in the Hall of Framed"]}
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
-                  <div className="hidden md:flex flex-col justify-center">
+                <div className="grid md:grid-rows-none md:grid-cols-2 gap-x-16 gap-y-16">
+                  <div className="md:flex md:flex-col md:justify-center">
                     <div className="grid grid-cols-3 grid-rows-3 gap-4 max-h-screen">
                       {top10hof.map((item, index) => {
                         return (
@@ -435,7 +435,7 @@ export default function Home() {
                             bg-gradient-to-t from-framed-black/75
                           `}
                               >
-                                <p className="text-white font-bold">
+                                <p className="text-white font-bold text-xs md:text-base">
                                   {index + 1}: {item.value} shots
                                   <br />
                                   {item.gameName}
@@ -461,9 +461,9 @@ export default function Home() {
                       })}
                     </div>
                   </div>
-                  <div className="grid grid-rows-2 gap-y-8">
-                    <div className="h-full flex flex-col justify-end">
-                      <h2 className="text-6xl font-bold mb-8">
+                  <div className="order-first md:order-none md:grid md:grid-rows-2 md:gap-y-8">
+                    <div className="md:h-full md:flex md:flex-col md:justify-end">
+                      <h2 className="text-3xl md:text-6xl font-bold mb-8">
                         Top 10 Games in the Hall of Framed
                       </h2>
                       <p>
@@ -474,7 +474,7 @@ export default function Home() {
                         past year.
                       </p>
                     </div>
-                    <div className="aspect-video">
+                    <div className="aspect-video hidden md:block">
                       <Pie
                         data={gameDistPie(
                           (data.hof as IShot[]).filter(
@@ -498,16 +498,16 @@ export default function Home() {
                 </div>
               </div>
               <div
-                className="min-h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500 mb-8"
+                className="min-h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500 mb-16"
                 ref={segments["Most Active Day in Share Your Shot"]}
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
-                  <div className="grid grid-rows-2 gap-y-8">
+                <div className="grid grid-rows-2 md:grid-rows-none md:grid-cols-2 gap-x-16 gap-y-16">
+                  <div className="grid md:grid-rows-2 gap-y-8">
                     <div className="h-full flex flex-col justify-end">
-                      <h2 className="text-6xl font-bold mb-8">
+                      <h2 className="text-3xl md:text-6xl font-bold mb-8">
                         Most Active Day in Share Your Shot
                       </h2>
-                      <h3 className="text-4xl font-bold mb-8">
+                      <h3 className="text-2xl md:text-4xl font-bold mb-8">
                         {new Date(
                           calendarDataFormat(data.sys).sort(
                             (a, b) => b.value - a.value,
@@ -535,7 +535,7 @@ export default function Home() {
                         come!
                       </p>
                     </div>
-                    <div className="aspect-video">
+                    <div className="aspect-video hidden md:block">
                       <Pie
                         data={gameDistPie(
                           calendarDataFormat(data.sys).sort(
@@ -552,7 +552,7 @@ export default function Home() {
                       />
                     </div>
                   </div>
-                  <div className="hidden md:flex flex-col justify-center">
+                  <div className="flex flex-col justify-center">
                     <div className="grid grid-cols-3 grid-rows-3 gap-4 max-h-screen">
                       {mostActiveSys.slice(0, 10).map((item, index) => {
                         return (
@@ -570,7 +570,7 @@ export default function Home() {
                             bg-gradient-to-t from-framed-black/75
                           `}
                               >
-                                <p className="text-white font-bold">
+                                <p className="text-white font-bold text-xs md:text-base">
                                   {index + 1}: {item.value} shots
                                   <br />
                                   {item.gameName}
@@ -599,11 +599,11 @@ export default function Home() {
                 </div>
               </div>
               <div
-                className="min-h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500 mb-8"
+                className="min-h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500 mb-16"
                 ref={segments["Most Active Day in the Hall of Framed"]}
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
-                  <div className="hidden md:flex flex-col justify-center">
+                <div className="grid grid-rows-2 md:grid-rows-none md:grid-cols-2 gap-x-16 gap-y-16">
+                  <div className="md:flex flex-col justify-center">
                     <div className="grid grid-cols-3 grid-rows-3 gap-4 max-h-screen">
                       {mostActiveHof.slice(0, 10).map((item, index) => {
                         if (!item.gameName || !item.attachments) {
@@ -650,9 +650,9 @@ export default function Home() {
                       })}
                     </div>
                   </div>
-                  <div className="grid grid-rows-2 gap-y-8">
+                  <div className="md:grid md:grid-rows-2 md:gap-y-8 order-first md:order-none">
                     <div className="h-full flex flex-col justify-end">
-                      <h2 className="text-6xl font-bold mb-8">
+                      <h2 className="text-3xl md:text-6xl font-bold mb-8">
                         The Most Active Day in the Hall of Framed
                       </h2>
                       <h3 className="text-2xl font-bold mb-4">
@@ -681,7 +681,7 @@ export default function Home() {
                         photography in 2022!
                       </p>
                     </div>
-                    <div className="aspect-video">
+                    <div className="aspect-video hidden md:block">
                       <Pie
                         data={gameDistPie(
                           calendarDataFormat(data.hof).sort(

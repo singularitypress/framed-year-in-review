@@ -63,7 +63,7 @@ const Home = () => {
       <LoadWrapper>
         <main>
           <div className="absolute z-20 w-full">
-            <Container className="grid grid-rows-2 md:grid-rows-none md:grid-cols-2 gap-0 h-screen md:h-auto">
+            <Container className="grid grid-rows-2 md:grid-rows-none md:grid-cols-2 gap-0 min-h-screen md:h-auto">
               <div className="h-full md:h-screen flex flex-col justify-center pr-4 md:pr-10 md:text-right">
                 <h1 className="font-bold text-6xl md:text-8x1 lg:text-8xl load transition-all -translate-y-10 opacity-0 duration-500">
                   Framed
@@ -72,7 +72,7 @@ const Home = () => {
                   Year in Review 2022
                 </h2>
                 <Link
-                  className="rounded-md bg-gray-100 text-gray-900 border hover:bg-framed-black hover:text-gray-100 w-fit ml-auto px-4 py-2 mt-4 font-bold load transition-all -translate-y-10 opacity-0 duration-500"
+                  className="rounded-md bg-gray-100 text-gray-900 border hover:bg-framed-black hover:text-gray-100 w-fit md:ml-auto px-4 py-2 mt-4 font-bold load transition-all -translate-y-10 opacity-0 duration-500"
                   href="/data"
                 >
                   View
@@ -86,7 +86,7 @@ const Home = () => {
           <picture>
             <img
               loading="lazy"
-              className="load top-0 fixed transition-all -translate-y-10 opacity-0 duration-500 h-full md:h-screen object-cover w-full"
+              className="load top-0 absolute transition-all -translate-y-10 opacity-0 duration-500 h-full md:h-screen object-cover w-full"
               src={`${data.attachments?.replace(
                 "https://cdn.discordapp.com",
                 "https://media.discordapp.net",
