@@ -385,7 +385,7 @@ export default function Home() {
                           `}
                               >
                                 <p className="text-white font-bold">
-                                  {index + 1}. {item.value} shots
+                                  {index + 1}: {item.value} shots
                                   <br />
                                   {item.gameName}
                                   <br />
@@ -436,7 +436,7 @@ export default function Home() {
                           `}
                               >
                                 <p className="text-white font-bold">
-                                  {index + 1}. {item.value} shots
+                                  {index + 1}: {item.value} shots
                                   <br />
                                   {item.gameName}
                                   <br />
@@ -571,7 +571,7 @@ export default function Home() {
                           `}
                               >
                                 <p className="text-white font-bold">
-                                  {index + 1}. {item.value} shots
+                                  {index + 1}: {item.value} shots
                                   <br />
                                   {item.gameName}
                                   <br />
@@ -625,7 +625,7 @@ export default function Home() {
                           `}
                               >
                                 <p className="text-white font-bold">
-                                  {index + 1}. {item.value} shots
+                                  {index + 1}: {item.value} shots
                                   <br />
                                   {item.gameName}
                                   <br />
