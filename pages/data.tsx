@@ -203,12 +203,12 @@ export default function Home() {
                     <p>
                       We wanted to take a moment to reflect on some of the most
                       stunning virtual photography and video game screenshots
-                      that have graced our feeds.
+                      that the Framed community has produced throughout 2022.
                     </p>
                     <br />
                     <p>
                       From breathtaking landscapes in open-world games to
-                      intense action shots in first-person shooters, the gaming
+                      intense action shots in first-person shooters, our
                       community has truly outdone itself in capturing the beauty
                       and emotion of these digital worlds. Join us as we look
                       back at some of the most memorable moments and incredible
@@ -338,11 +338,11 @@ export default function Home() {
                       </h2>
                       <p>
                         As we wrap up 2022, it&apos;s time to take a look back
-                        at the most captivating virtual shots of the year in
-                        Framed&apos;s Share Your Shot. From the snow-capped
-                        mountains of Skyrim to the neon-lit cityscapes of
-                        Cyberpunk 2077, these shots embody the power of virtual
-                        photography.
+                        at the most captivating shots of the year in
+                        Framed&apos;s Share Your Shot Discord channel. From the
+                        snow-capped mountains of Skyrim to the neon-lit
+                        cityscapes of Cyberpunk 2077, these shots are the
+                        culmination of our community&apos;s creativity.
                       </p>
                     </div>
                     <div className="aspect-video hidden md:block">
@@ -467,11 +467,12 @@ export default function Home() {
                         Top 10 Games in the Hall of Framed
                       </h2>
                       <p>
-                        It&apos;s been an amazing year for virtual photography
-                        and video game screenshots! We&apos;ve seen a plethora
-                        of stunning shots posted to the Hall of Framed, but here
-                        we&apos;d like to take a look at the top 10 shots of the
-                        past year.
+                        Each shot submitted has a chance to make it to the Hall
+                        of Framed - our curated collection of shots voted for by
+                        the Framed community. We saw some familiar titles hold
+                        their position at the top, as well as a few newer titles
+                        breaking through to claim their spot in the top 10 games
+                        making it into the Hall of Framed for 2022.
                       </p>
                     </div>
                     <div className="aspect-video hidden md:block">
@@ -520,19 +521,18 @@ export default function Home() {
                         })}
                       </h3>
                       <p>
-                        The top three most shot games this year were SIFU, God
-                        of War, and No Man&apos;s Sky, each inspiring players to
-                        capture breathtaking moments and share their own unique
-                        perspectives with the community. Whether it was
-                        showcasing the fluid martial arts combat in SIFU,
-                        capturing the epic battles of God of War, or exploring
-                        the vast and beautiful alien landscapes of No Man&apos;s
-                        Sky, these games provided plenty of opportunities for
-                        players to showcase their skills and imagination.
-                        It&apos;s clear that virtual photography continues to
-                        thrive and evolve, and we can&apos;t wait to see what
-                        creative shots players will come up with in the years to
-                        come!
+                        On our busiest day of the year, one day after the launch
+                        of the martial-arts title SIFU, our community posted the
+                        highest number of shots in a single day for the entire
+                        year. With a whopping 96 shots posted in a single day,
+                        the Framed community flooded the server with all manner
+                        of impressive shots. With punch-em-up title SIFU
+                        claiming the top spot at 13 shots at 13.54% of the
+                        day&apos;s shots, followed closely by God of War & No
+                        Man&apos;s Sky taking the second and third place slots
+                        respectively. The busiest day also saw some lesser shot
+                        titles make an appearance with Bloodborne, Twin Mirror,
+                        and Mosaic also making appearances.
                       </p>
                     </div>
                     <div className="aspect-video hidden md:block">
@@ -624,7 +624,7 @@ export default function Home() {
                             bg-gradient-to-t from-framed-black/75
                           `}
                               >
-                                <p className="text-white font-bold">
+                                <p className="text-white font-bold text-xs md:text-base">
                                   {index + 1}: {item.value} shots
                                   <br />
                                   {item.gameName}
@@ -668,17 +668,16 @@ export default function Home() {
                         })}
                       </h3>
                       <p>
-                        Players were eager to capture the stunning vistas and
-                        gritty towns of Red Dead Redemption 2, the neon-lit
-                        futuristic world of Cyberpunk 2077, and the mysterious
-                        forest landscapes of The Pathless. Whether it was
-                        showcasing the realism of the Wild West or exploring a
-                        futuristic metropolis, players were able to express
-                        their creativity and passion for virtual photography.
-                        With such a diverse range of games and a community of
-                        talented photographers, the Hall of Framed was
-                        definitely the place to be for all things virtual
-                        photography in 2022!
+                        It should come as no surprise that the busiest day for
+                        the Hall of Framed in 2022 features some of our most
+                        familiar and favorite titles. Red Dead Redemption 2
+                        etched out the top spot with four different shots
+                        gaining enough votes to break into the curated gallery,
+                        followed quickly by server-mainstay title Cyberpunk
+                        2077. Giant Squid & Annapurna Interactive&apos;s The
+                        Pathless makes a surprising entry as the third highest
+                        entry, showcasing the game&apos;s visuals from a whole
+                        new angle.
                       </p>
                     </div>
                     <div className="aspect-video hidden md:block">
