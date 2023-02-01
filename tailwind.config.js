@@ -12,6 +12,9 @@ module.exports = {
         "framed-gray": "#333333",
         "framed-legacy": "#8A8A8A",
       },
+      width: {
+        "h-screen": "100vh",
+      },
     },
   },
   plugins: [],

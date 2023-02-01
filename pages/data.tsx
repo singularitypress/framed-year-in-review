@@ -700,9 +700,9 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="calendar h-screen grid grid-rows-2 gap-x-8">
+              <div className="calendar h-screen grid grid-rows-2 gap-x-8 overflow-scroll md:overflow-auto">
                 <div
-                  className="flex flex-col items-center"
+                  className="flex flex-col items-center w-h-screen md:w-full"
                   ref={segments["Daily Share Your Shot"]}
                 >
                   <h3 className="font-bold text-3xl pl-20">
@@ -720,7 +720,7 @@ export default function Home() {
                   />
                 </div>
                 <div
-                  className="flex flex-col items-center"
+                  className="flex flex-col items-center w-h-screen md:w-full"
                   ref={segments["Daily Hall of Framed"]}
                 >
                   <h3 className="font-bold text-3xl pl-20">
