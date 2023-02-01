@@ -13,7 +13,7 @@ export const SegmentedControl = ({
   onChange: (data: string) => void;
 }) => {
   return (
-    <div className="flex flex-row items-center justify-center w-fit border border-white/10 rounded-md p-2 bg-gray-900">
+    <div className="flex flex-row items-center justify-center w-fit border border-white/10 rounded-md p-2 bg-framed-black">
       {data.map((item, index) => (
         <div
           key={index}

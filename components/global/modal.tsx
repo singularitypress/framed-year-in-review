@@ -37,14 +37,14 @@ export const Modal = ({
           ? "z-50 -translate-y-0 opacity-100"
           : "-z-10 -translate-y-10 opacity-0"
       }
-      top-0 left-0 w-full h-full bg-gray-900/50 backdrop-blur-lg flex justify-center items-center p-20
+      top-0 left-0 w-full h-full bg-framed-black/50 backdrop-blur-lg flex justify-center items-center p-20
       `}
     >
       <div
         onClick={onClose}
         className="absolute top-0 left-0 w-full h-full"
       ></div>
-      <div className="max-h-full max-w-full overflow-y-auto bg-gray-900 rounded-lg shadow-2xl p-10">
+      <div className="max-h-full max-w-full overflow-y-auto bg-framed-black rounded-lg shadow-2xl p-10">
         <button
           onClick={onClose}
           className="absolute top-0 right-0 p-5 text-gray-100 hover:text-gray-200"

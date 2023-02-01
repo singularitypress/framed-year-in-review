@@ -4,11 +4,26 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap");
 
+@font-face {
+  font-family: "Galano-Grotesque";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Galano-Grotesque/GalanoGrotesque-Bold.woff2") format("woff2");
+}
+
 html {
   font-family: "Inter", sans-serif;
 
+  h1,
+  h2,
+  h3 {
+    font-family: "Galano-Grotesque", "Inter", sans-serif;
+    font-weight: 700;
+  }
+
   body {
-    @apply bg-gray-900 text-gray-100;
+    @apply bg-framed-black text-gray-100;
   }
 }
 

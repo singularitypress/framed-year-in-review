@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React from "react";
+import React, { useMemo } from "react";
 import { IShot } from "@types";
 import { getDateLastYear } from "@util";
 import { Container, LoadWrapper } from "@components/global";
@@ -9,6 +9,7 @@ import {
   ErrorSection,
   LoadingSection,
 } from "@components/experience-fragments";
+import Link from "next/link";
 
 const fetcher = (query: string) =>
   fetch(`/api/graphql`, {
@@ -70,6 +71,12 @@ const Home = () => {
                 <h2 className="text-2xl font-bold load transition-all -translate-y-10 opacity-0 duration-500">
                   Year in Review 2022
                 </h2>
+                <Link
+                  className="rounded-md bg-gray-100 text-gray-900 border hover:bg-framed-black hover:text-gray-100 w-fit ml-auto px-4 py-2 mt-4 font-bold load transition-all -translate-y-10 opacity-0 duration-500"
+                  href="/data"
+                >
+                  View
+                </Link>
               </div>
             </Container>
           </div>

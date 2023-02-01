@@ -31,7 +31,7 @@ const fetcher = (query: string) =>
 
 const CustomTooltip = (data: CalendarTooltipProps) => {
   return (
-    <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+    <div className="bg-framed-black text-white py-1 px-3 rounded-md shadow-md">
       {new Date(data.day).toLocaleDateString("en-US", {
         timeZone: "UTC",
         day: "2-digit",
@@ -45,7 +45,7 @@ const CustomTooltip = (data: CalendarTooltipProps) => {
 
 const ModalContent = ({ data }: { data: CalendarTooltipProps }) => {
   return (
-    <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md h-96 aspect-video">
+    <div className="bg-framed-black text-white py-1 px-3 rounded-md shadow-md h-96 aspect-video">
       {new Date(data.day).toLocaleDateString("en-US", {
         timeZone: "UTC",
         day: "2-digit",
@@ -56,7 +56,7 @@ const ModalContent = ({ data }: { data: CalendarTooltipProps }) => {
       <Pie
         data={gameDistPie((data as CalendarPieTooltip).data.shots, 11)}
         tooltip={(d) => (
-          <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+          <div className="bg-framed-black text-white py-1 px-3 rounded-md shadow-md">
             {d.datum.label}: <strong>{d.datum.value}</strong> shots
           </div>
         )}
@@ -191,7 +191,7 @@ export default function Home() {
       </Head>
       <LoadWrapper>
         <main className="relative">
-          <div className="relative z-10 backdrop-blur-3xl bg-gray-900/75">
+          <div className="relative z-10 bg-framed-black/60">
             <Container className="pt-8 -translate-y-20">
               <div className="min-h-screen flex items-center load transition-all -translate-y-10 opacity-0 duration-500 mb-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
@@ -201,10 +201,9 @@ export default function Home() {
                     </h1>
                     <br />
                     <p>
-                      As the year comes to a close, we wanted to take a moment
-                      to reflect on some of the most stunning virtual
-                      photography and video game screenshots that have graced
-                      our feeds.
+                      We wanted to take a moment to reflect on some of the most
+                      stunning virtual photography and video game screenshots
+                      that have graced our feeds.
                     </p>
                     <br />
                     <p>
@@ -359,7 +358,7 @@ export default function Home() {
                           11,
                         )}
                         tooltip={(d) => (
-                          <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+                          <div className="bg-framed-black text-white py-1 px-3 rounded-md shadow-md">
                             {d.datum.label}: <strong>{d.datum.value}</strong>{" "}
                             shots
                           </div>
@@ -488,7 +487,7 @@ export default function Home() {
                           11,
                         )}
                         tooltip={(d) => (
-                          <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+                          <div className="bg-framed-black text-white py-1 px-3 rounded-md shadow-md">
                             {d.datum.label}: <strong>{d.datum.value}</strong>{" "}
                             shots
                           </div>
@@ -545,7 +544,7 @@ export default function Home() {
                           11,
                         )}
                         tooltip={(d) => (
-                          <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+                          <div className="bg-framed-black text-white py-1 px-3 rounded-md shadow-md">
                             {d.datum.label}: <strong>{d.datum.value}</strong>{" "}
                             shots
                           </div>
@@ -691,7 +690,7 @@ export default function Home() {
                           11,
                         )}
                         tooltip={(d) => (
-                          <div className="bg-gray-900 text-white py-1 px-3 rounded-md shadow-md">
+                          <div className="bg-framed-black text-white py-1 px-3 rounded-md shadow-md">
                             {d.datum.label}: <strong>{d.datum.value}</strong>{" "}
                             shots
                           </div>
@@ -741,6 +740,13 @@ export default function Home() {
               </div>
             </Container>
           </div>
+          <picture>
+            <img
+              className="absolute top-0 left-0 w-full h-full object-cover"
+              src="/images/Topography.svg"
+              alt=""
+            />
+          </picture>
         </main>
       </LoadWrapper>
       <Modal
