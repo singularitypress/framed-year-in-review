@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { useMemo } from "react";
+import React, { useRef } from "react";
 import { IShot } from "@types";
 import { getDateLastYear } from "@util";
 import { Container, LoadWrapper } from "@components/global";
@@ -25,11 +25,10 @@ const fetcher = (query: string) =>
       const data = json.data.shots[Math.floor(Math.random() * len - 1)];
       return data as IShot;
     });
+const start = getDateLastYear();
+const end = getDateLastYear(true);
 
-const Home = () => {
-  const start = getDateLastYear();
-  const end = getDateLastYear(true);
-  const query = /* GraphQL */ `
+const query = /* GraphQL */ `
     query {
       shots(
         startDate: "${start.year}-${start.month}-${start.day}"
@@ -41,7 +40,10 @@ const Home = () => {
     }
   `;
 
+const Home = () => {
   const { data, error, isLoading } = useSWR<IShot>(query, fetcher);
+
+  const imgSrc = useRef<string>("");
 
   if (isLoading) {
     return <LoadingSection />;
@@ -55,6 +57,10 @@ const Home = () => {
     return <ErrorNoData />;
   }
 
+  if (!imgSrc.current) {
+    imgSrc.current = data.attachments ?? "";
+  }
+
   return (
     <>
       <Head>
@@ -66,7 +72,7 @@ const Home = () => {
             <Container className="grid grid-rows-2 md:grid-rows-none md:grid-cols-2 gap-0 min-h-screen md:h-auto">
               <div className="h-full md:h-screen flex flex-col justify-center pr-4 md:pr-10 md:text-right">
                 <h1 className="font-bold text-6xl md:text-8x1 lg:text-8xl load transition-all -translate-y-10 opacity-0 duration-500">
-                  Framed
+                  FRAMED
                 </h1>
                 <h2 className="text-2xl font-bold load transition-all -translate-y-10 opacity-0 duration-500">
                   Year in Review 2022
@@ -87,10 +93,10 @@ const Home = () => {
             <img
               loading="lazy"
               className="load top-0 absolute transition-all -translate-y-10 opacity-0 duration-500 h-full md:h-screen object-cover w-full"
-              src={`${data.attachments?.replace(
+              src={`${imgSrc.current?.replace(
                 "https://cdn.discordapp.com",
                 "https://media.discordapp.net",
-              )}?width=1920&height=1080`}
+              )}?width=2560&height=1440`}
               alt="Landscape picture"
             />
           </picture>

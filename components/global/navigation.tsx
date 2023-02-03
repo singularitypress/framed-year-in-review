@@ -22,7 +22,11 @@ export const Navigation = () => {
       <Container>
         <ul className="flex items-center">
           <li>
-            <Link href="/">
+            <Link
+              href="https://framedsc.com/HallOfFramed/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <div className="w-8 h-8 mr-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

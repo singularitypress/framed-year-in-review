@@ -239,6 +239,7 @@ export default function Home() {
                             </div>
                             <picture>
                               <img
+                                loading="lazy"
                                 className="load transition-all -translate-y-10 opacity-0 duration-500 rounded-md object-cover"
                                 alt={item.gameName}
                                 src={`${item.attachments?.replace(
@@ -279,6 +280,7 @@ export default function Home() {
                           </div>
                           <picture>
                             <img
+                              loading="lazy"
                               className={`
                             load transition-all -translate-y-10 opacity-0 duration-500 object-cover h-full
                             ${
@@ -397,6 +399,7 @@ export default function Home() {
                             </div>
                             <picture>
                               <img
+                                loading="lazy"
                                 className="rounded-md object-cover w-full h-full"
                                 alt={item.gameName}
                                 src={`${item.attachments?.replace(
@@ -448,6 +451,7 @@ export default function Home() {
                             </div>
                             <picture>
                               <img
+                                loading="lazy"
                                 className="rounded-md object-cover w-full h-full"
                                 alt={item.gameName}
                                 src={`${item.attachments?.replace(
@@ -583,6 +587,7 @@ export default function Home() {
                             </div>
                             <picture>
                               <img
+                                loading="lazy"
                                 className="rounded-md object-cover w-full h-full"
                                 alt={item.gameName}
                                 src={`${item.attachments?.replace(
@@ -637,6 +642,7 @@ export default function Home() {
                             </div>
                             <picture>
                               <img
+                                loading="lazy"
                                 className="rounded-md object-cover w-full h-full"
                                 alt={item.gameName}
                                 src={`${item.attachments?.replace(
@@ -741,6 +747,7 @@ export default function Home() {
           </div>
           <picture>
             <img
+              loading="lazy"
               className="absolute top-0 left-0 w-full h-full object-cover"
               src="/images/Topography.svg"
               alt=""
